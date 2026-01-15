@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: issue-management-system
+  datasource:
+    url: ${DB_URL:your_url}
+    username: ${DB_USERNAME:your_username}
+    password: ${DB_PASSWORD:your_password}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format-sql: true
+
+api:
+  prefix: "/api/v1"
+
+open:
+  api:
+    title: "JUST FOR FUN"
+    description: "Lam cho vui thoi"
+    version: "v0.0.1"
+    serverUrl: "http://localhost:8080/"
+    serverName: "Da bao lam cho vui roi ma"
+
+app:
+  init-data: false
