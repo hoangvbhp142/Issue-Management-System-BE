@@ -1,10 +1,13 @@
 package com.example.issue_management_system.common.response;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PACKAGE)
 public class ApiResponse<T> {
 
     int status;
