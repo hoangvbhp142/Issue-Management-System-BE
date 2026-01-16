@@ -18,8 +18,8 @@ public class IssueHistoryController {
     @GetMapping("/issue/{issueId}")
     public ApiResponse<?> getByIssue(
             @PathVariable Integer issueId,
-            @RequestParam int pageSize,
-            @RequestParam int pageNum
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(defaultValue = "0") int pageNum
     ) {
         Pageable pageable = PageRequest.of(pageNum, pageSize);
         var response = issueHistoryService.findAllByIssueId(issueId, pageable);

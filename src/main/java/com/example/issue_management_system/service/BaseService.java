@@ -8,11 +8,11 @@ import org.springframework.data.domain.Pageable;
 
 public interface BaseService<T extends BaseEntity, ID, R, Q> {
     T findById(ID id);
-    T findAllByIsDeletedFalse(ID id);
-    Page<T> findAll(Pageable pageable);
-    Page<T> findAllByIsDeletedFalse(Pageable pageable);
-    T create(R r);
-    T update(ID id, R r);
+    Q findByIdAndIsDeletedFalse(ID id);
+    Page<Q> findAll(Pageable pageable);
+    Page<Q> findAllByIsDeletedFalse(Pageable pageable);
+    Q create(R r);
+    Q update(ID id, R r);
     void delete(ID id);
     T onCreate(R r, T e);
     T onUpdate(R r, T e);

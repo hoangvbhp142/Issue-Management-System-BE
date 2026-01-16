@@ -29,7 +29,7 @@ public class IssueHistoryServiceImpl extends BaseServiceImpl<IssueHistory, Integ
     }
 
     @Override
-    public Page<IssueHistory> findAllByIssueId(Integer issueId, Pageable pageable) {
-        return historyRepository.findAllByIssueId(issueId, pageable);
+    public Page<IssueHistoryDto> findAllByIssueId(Integer issueId, Pageable pageable) {
+        return historyRepository.findAllByIssueId(issueId, pageable).map(historyMapper::toResponse);
     }
 }

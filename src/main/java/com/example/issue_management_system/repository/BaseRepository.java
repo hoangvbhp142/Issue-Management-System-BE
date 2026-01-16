@@ -12,7 +12,8 @@ import java.util.Optional;
 public interface BaseRepository<T, ID> extends JpaRepository<T, ID> {
     Page<T> findAllByIsDeletedFalse(Pageable pageable);
 
-    Optional<T> findAllByIsDeletedFalse(ID id);
+    Optional<T> findByIdAndIsDeletedFalse(ID id);
 
     void deleteById(@NonNull ID id);
+
 }

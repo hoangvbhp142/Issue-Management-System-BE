@@ -19,7 +19,7 @@ public class UserController extends BaseController<Integer, UserRequest> {
     @GetMapping("/{id}")
     @Override
     public ApiResponse<?> getById(Integer id) {
-        var response = userService.findAllByIsDeletedFalse(id);
+        var response = userService.findByIdAndIsDeletedFalse(id);
         return new ApiResponse<>(
                 HttpStatus.OK.value(),
                 "Success",

@@ -20,7 +20,7 @@ public class IssueController extends BaseController<Integer, IssueRequest> {
     @GetMapping("/{id}")
     @Override
     public ApiResponse<?> getById(Integer id) {
-        var response = issueService.findById(id);
+        var response = issueService.findByIdAndIsDeletedFalse(id);
         return new ApiResponse<>(
                 HttpStatus.OK.value(),
                 "Success",

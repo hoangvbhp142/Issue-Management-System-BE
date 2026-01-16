@@ -23,32 +23,34 @@ public abstract class BaseServiceImpl<T extends BaseEntity, ID, R, Q> implements
     }
 
     @Override
-    public T findAllByIsDeletedFalse(ID id) {
-        return baseRepository.findAllByIsDeletedFalse(id)
+    public Q findByIdAndIsDeletedFalse(ID id) {
+        T e = baseRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new RuntimeException("Resource not found"));
+        return baseMapper.toResponse(e);
     }
 
     @Override
-    public Page<T> findAll(Pageable pageable) {
-        return baseRepository.findAll(pageable);
+    public Page<Q> findAll(Pageable pageable) {
+        Page<T> page = baseRepository.findAll(pageable);
+        return page.map(baseMapper::toResponse);
     }
 
     @Override
-    public Page<T> findAllByIsDeletedFalse(Pageable pageable) {
-        return baseRepository.findAllByIsDeletedFalse(pageable);
+    public Page<Q> findAllByIsDeletedFalse(Pageable pageable) {
+        return baseRepository.findAllByIsDeletedFalse(pageable).map(baseMapper::toResponse);
     }
 
     @Override
-    public T create(R r) {
+    public Q create(R r) {
         T e = baseMapper.createToEntity(r);
-        return baseRepository.save(onCreate(r, e));
+        return baseMapper.toResponse(baseRepository.save(onCreate(r, e)));
     }
 
     @Override
-    public T update(ID id, R r) {
+    public Q update(ID id, R r) {
         T e = findById(id);
         e = baseMapper.updateToEntity(e, r);
-        return baseRepository.save(onUpdate(r, e));
+        return baseMapper.toResponse(baseRepository.save(onUpdate(r, e)));
     }
 
     @Override
