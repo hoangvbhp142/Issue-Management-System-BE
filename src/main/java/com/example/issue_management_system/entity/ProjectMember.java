@@ -1,6 +1,6 @@
 package com.example.issue_management_system.entity;
 
-import com.example.issue_management_system.common.enums.ProjectRole;
+import com.example.issue_management_system.entity.enums.ProjectRole;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

@@ -1,7 +1,7 @@
 package com.example.issue_management_system.controller;
 
-import com.example.issue_management_system.common.response.ApiResponse;
-import com.example.issue_management_system.request.ProjectMemberRequest;
+import com.example.issue_management_system.common.ApiResponse;
+import com.example.issue_management_system.dto.request.ProjectMemberRequest;
 import com.example.issue_management_system.service.impl.ProjectMemberServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

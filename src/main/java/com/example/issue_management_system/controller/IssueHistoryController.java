@@ -1,6 +1,6 @@
 package com.example.issue_management_system.controller;
 
-import com.example.issue_management_system.common.response.ApiResponse;
+import com.example.issue_management_system.common.ApiResponse;
 import com.example.issue_management_system.service.impl.IssueHistoryServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;

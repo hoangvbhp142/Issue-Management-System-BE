@@ -1,6 +1,6 @@
-package com.example.issue_management_system.request;
+package com.example.issue_management_system.dto.request;
 
-import com.example.issue_management_system.common.enums.IssueStatus;
+import com.example.issue_management_system.entity.enums.IssueStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,4 +15,5 @@ public class IssueRequest {
     String description;
     IssueStatus status;
     Integer reporterId;
+    Integer projectId;
 }

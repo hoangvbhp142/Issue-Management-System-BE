@@ -1,8 +1,7 @@
 package com.example.issue_management_system.repository;
 
-import com.example.issue_management_system.common.enums.ProjectRole;
+import com.example.issue_management_system.entity.enums.ProjectRole;
 import com.example.issue_management_system.entity.ProjectMember;
-import com.example.issue_management_system.entity.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

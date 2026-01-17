@@ -1,9 +1,9 @@
 package com.example.issue_management_system.mapper;
 
 import com.example.issue_management_system.config.MapperConfig;
-import com.example.issue_management_system.dto.IssueHistoryDto;
+import com.example.issue_management_system.dto.response.IssueHistoryDto;
 import com.example.issue_management_system.entity.IssueHistory;
-import com.example.issue_management_system.request.IssueHistoryRequest;
+import com.example.issue_management_system.dto.request.IssueHistoryRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

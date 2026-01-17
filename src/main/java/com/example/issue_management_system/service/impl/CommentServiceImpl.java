@@ -1,6 +1,6 @@
 package com.example.issue_management_system.service.impl;
 
-import com.example.issue_management_system.dto.CommentDto;
+import com.example.issue_management_system.dto.response.CommentDto;
 import com.example.issue_management_system.entity.Comment;
 import com.example.issue_management_system.entity.Issue;
 import com.example.issue_management_system.entity.User;
@@ -8,7 +8,7 @@ import com.example.issue_management_system.mapper.CommentMapper;
 import com.example.issue_management_system.repository.CommentRepository;
 import com.example.issue_management_system.repository.IssueRepository;
 import com.example.issue_management_system.repository.UserRepository;
-import com.example.issue_management_system.request.CommentRequest;
+import com.example.issue_management_system.dto.request.CommentRequest;
 import com.example.issue_management_system.service.CommentService;
 import org.springframework.stereotype.Service;
 

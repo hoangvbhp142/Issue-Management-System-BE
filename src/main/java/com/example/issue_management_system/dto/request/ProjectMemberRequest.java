@@ -1,6 +1,6 @@
-package com.example.issue_management_system.request;
+package com.example.issue_management_system.dto.request;
 
-import com.example.issue_management_system.common.enums.ProjectRole;
+import com.example.issue_management_system.entity.enums.ProjectRole;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

@@ -1,19 +1,17 @@
 package com.example.issue_management_system.service.impl;
 
-import com.example.issue_management_system.common.enums.IssueStatus;
-import com.example.issue_management_system.common.enums.ProjectRole;
-import com.example.issue_management_system.dto.IssueDto;
+import com.example.issue_management_system.entity.Project;
+import com.example.issue_management_system.entity.enums.IssueStatus;
+import com.example.issue_management_system.entity.enums.ProjectRole;
+import com.example.issue_management_system.dto.response.IssueDto;
 import com.example.issue_management_system.entity.Issue;
 import com.example.issue_management_system.entity.IssueHistory;
-import com.example.issue_management_system.entity.ProjectMember;
 import com.example.issue_management_system.entity.User;
 import com.example.issue_management_system.mapper.IssueMapper;
 import com.example.issue_management_system.repository.IssueHistoryRepository;
 import com.example.issue_management_system.repository.IssueRepository;
-import com.example.issue_management_system.repository.UserRepository;
-import com.example.issue_management_system.request.IssueRequest;
+import com.example.issue_management_system.dto.request.IssueRequest;
 import com.example.issue_management_system.service.IssueService;
-import com.example.issue_management_system.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -27,17 +25,19 @@ public class IssueServiceImpl extends BaseServiceImpl<Issue, Integer, IssueReque
     private final IssueHistoryRepository historyRepository;
 
     private final ProjectMemberServiceImpl memberService;
+    private final ProjectServiceImpl projectService;
 
     public IssueServiceImpl(IssueRepository issueRepository,
                             IssueMapper issueMapper,
                             UserServiceImpl userService,
-                            IssueHistoryRepository historyRepository, ProjectMemberServiceImpl memberService) {
+                            IssueHistoryRepository historyRepository, ProjectMemberServiceImpl memberService, ProjectServiceImpl projectService) {
         super(issueRepository, issueMapper);
         this.issueRepository = issueRepository;
         this.issueMapper = issueMapper;
         this.userService = userService;
         this.historyRepository = historyRepository;
         this.memberService = memberService;
+        this.projectService = projectService;
     }
 
     @Transactional
@@ -78,7 +78,12 @@ public class IssueServiceImpl extends BaseServiceImpl<Issue, Integer, IssueReque
     @Override
     public Issue onCreate(IssueRequest issueRequest, Issue e) {
         User reporter = userService.findById(issueRequest.getReporterId());
-        memberService.checkMember(e.getProject().getId(), reporter.getId());
+        Project project = projectService.findById(issueRequest.getProjectId());
+
+        memberService.checkMember(project.getId(), reporter.getId());
+
+
+        e.setProject(project);
         e.setReporter(reporter);
         return super.onCreate(issueRequest, e);
     }

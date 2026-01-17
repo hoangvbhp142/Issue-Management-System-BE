@@ -1,7 +1,6 @@
 package com.example.issue_management_system.service;
 
-import com.example.issue_management_system.dto.CommentDto;
-import com.example.issue_management_system.entity.Comment;
+import com.example.issue_management_system.dto.response.CommentDto;
 
 import java.util.List;
 

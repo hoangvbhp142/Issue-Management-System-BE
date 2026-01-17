@@ -1,6 +1,6 @@
-package com.example.issue_management_system.dto;
+package com.example.issue_management_system.dto.response;
 
-import com.example.issue_management_system.common.enums.IssueStatus;
+import com.example.issue_management_system.entity.enums.IssueStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

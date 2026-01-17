@@ -1,13 +1,13 @@
 package com.example.issue_management_system.service.impl;
 
-import com.example.issue_management_system.common.enums.ProjectRole;
-import com.example.issue_management_system.dto.ProjectMemberDto;
+import com.example.issue_management_system.entity.enums.ProjectRole;
+import com.example.issue_management_system.dto.response.ProjectMemberDto;
 import com.example.issue_management_system.entity.Project;
 import com.example.issue_management_system.entity.ProjectMember;
 import com.example.issue_management_system.entity.User;
 import com.example.issue_management_system.mapper.ProjectMemberMapper;
 import com.example.issue_management_system.repository.ProjectMemberRepository;
-import com.example.issue_management_system.request.ProjectMemberRequest;
+import com.example.issue_management_system.dto.request.ProjectMemberRequest;
 import com.example.issue_management_system.service.ProjectMemberService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;

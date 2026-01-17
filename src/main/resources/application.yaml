@@ -24,5 +24,12 @@ open:
     serverUrl: "http://localhost:8080/"
     serverName: "Da bao lam cho vui roi ma"
 
+minio:
+  url: http://localhost:9000
+  access-key: hoang
+  secret-key: hoangviettran
+  bucket: issue-image
+  expiry: 3600
+
 app:
   init-data: false

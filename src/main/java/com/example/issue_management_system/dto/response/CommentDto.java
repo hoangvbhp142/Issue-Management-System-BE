@@ -1,4 +1,4 @@
-package com.example.issue_management_system.dto;
+package com.example.issue_management_system.dto.response;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -12,8 +12,9 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserDto implements Serializable {
+public class CommentDto implements Serializable {
     Integer id;
-    String username;
-    String email;
+    String content;
+    IssueDto issue;
+    UserDto user;
 }

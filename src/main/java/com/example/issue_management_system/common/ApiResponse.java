@@ -1,4 +1,4 @@
-package com.example.issue_management_system.common.response;
+package com.example.issue_management_system.common;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

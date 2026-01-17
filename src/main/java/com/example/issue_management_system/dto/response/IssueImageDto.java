@@ -1,6 +1,5 @@
-package com.example.issue_management_system.dto;
+package com.example.issue_management_system.dto.response;
 
-import com.example.issue_management_system.common.enums.ProjectRole;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProjectMemberDto {
-    UserDto user;
-    ProjectRole role;
+public class IssueImageDto {
+    Integer id;
+    String url;
 }

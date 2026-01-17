@@ -1,6 +1,6 @@
 package com.example.issue_management_system.controller;
 
-import com.example.issue_management_system.common.response.ApiResponse;
+import com.example.issue_management_system.common.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;

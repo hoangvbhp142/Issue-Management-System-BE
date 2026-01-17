@@ -23,6 +23,7 @@ Dự án tập trung vào **thiết kế nghiệp vụ, phân quyền và kiến
 * **RESTful API**
 * **MySQL**
 * **Maven**
+* **Minio**
 
 ---
 
@@ -115,6 +116,8 @@ Mỗi project có danh sách thành viên riêng thông qua entity `ProjectMembe
 * `ProjectMember`
 * `Issue`
 * `IssueHistory`
+* `Comment`
+* `Image`
 
 Quan hệ:
 
@@ -122,19 +125,22 @@ Quan hệ:
 * User – ProjectMember: One-to-Many
 * Project – Issue: One-to-Many
 * Issue – IssueHistory: One-to-Many
+* Issue - Image: One-to-Many
+* Issue - Comment: One-to-Many
 
 ---
 
 ## API Structure (Example)
 
 ```text
+UserController
 GET     /users/{id}
 GET     /users
 POST    /users
 PUT     /users/{id}
 DELETE  /users/{id}
 
-
+IssueController
 GET     /issues/{id}
 GET     /issues
 POST    /issues
@@ -142,23 +148,27 @@ PUT     /issues/{id}/assign
 PUT     /issues/{id}/status
 DELETE    /issues/{id}
 
+CommentController
 POST    /comments
 GET     /comments/issue/{issueId}
 
+IssueHistoryController
 GET     /issue-histories/issue/{issueId}
 
-POST    /api/projects
-GET     /api/projects
-GET     /api/projects/{id}
-POST    /api/projects/{id}/archive
+ProjectController
+POST    /projects
+GET     /projects
+GET     /projects/{id}
+POST    /projects/{id}/archive
 
-POST    /api/projects/{projectId}/members
-DELETE  /api/projects/{projectId}/members/{userId}
-PUT     /api/projects/{projectId}/members/{userId}/role
+ProjectMemberController
+POST    /projects/{projectId}/members
+DELETE  /projects/{projectId}/members/{userId}
+PUT     /projects/{projectId}/members/{userId}/role
 
-POST    /api/issues
-PUT     /api/issues/{id}/assign
-PUT     /api/issues/{id}/status
+ImageController
+POST    /images/{id}/images
+GET     /issues/{issueId}/images
 ```
 
 ---
@@ -177,7 +187,6 @@ Mục tiêu của project:
 
 * Tích hợp Spring Security + JWT
 * Permission chi tiết hơn (Issue-level permission)
-* Comment cho Issue
 * Notification khi issue được assign / đổi trạng thái
 
 ---
@@ -191,4 +200,4 @@ mong tìm được 1 công việc đúng chuyên môn**
 ---
 
 
-trien khai project, project member
+trien khai minio de luu anh cua issue

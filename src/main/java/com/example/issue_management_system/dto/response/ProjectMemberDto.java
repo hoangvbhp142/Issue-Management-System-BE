@@ -1,20 +1,17 @@
-package com.example.issue_management_system.dto;
+package com.example.issue_management_system.dto.response;
 
+import com.example.issue_management_system.entity.enums.ProjectRole;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-import java.io.Serializable;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CommentDto implements Serializable {
-    Integer id;
-    String content;
-    IssueDto issue;
+public class ProjectMemberDto {
     UserDto user;
+    ProjectRole role;
 }

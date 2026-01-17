@@ -1,9 +1,11 @@
 package com.example.issue_management_system.entity;
 
-import com.example.issue_management_system.common.enums.IssueStatus;
+import com.example.issue_management_system.entity.enums.IssueStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -31,4 +33,6 @@ public class Issue extends BaseEntity{
     @JoinColumn(name = "project_id")
     Project project;
 
+    @OneToMany(mappedBy = "issue", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<IssueImage> issueImages;
 }
