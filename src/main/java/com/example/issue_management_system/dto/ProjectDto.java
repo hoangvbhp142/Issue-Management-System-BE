@@ -6,15 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-import java.io.Serializable;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CommentDto implements Serializable {
+public class ProjectDto {
     Integer id;
-    String content;
-    IssueDto issue;
-    UserDto user;
+    String name;
+    String description;
+    UserDto owner;
 }
