@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface IssueHistoryService {
-    IssueHistory create(IssueHistory issueHistory);
+    IssueHistoryDto create(IssueHistory issueHistory);
 
     Page<IssueHistoryDto> findAllByIssueId(Integer issueId, Pageable pageable);
 }

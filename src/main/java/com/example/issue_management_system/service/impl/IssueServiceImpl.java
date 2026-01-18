@@ -7,6 +7,7 @@ import com.example.issue_management_system.dto.response.IssueDto;
 import com.example.issue_management_system.entity.Issue;
 import com.example.issue_management_system.entity.IssueHistory;
 import com.example.issue_management_system.entity.User;
+import com.example.issue_management_system.exception.BusinessException;
 import com.example.issue_management_system.mapper.IssueMapper;
 import com.example.issue_management_system.repository.IssueHistoryRepository;
 import com.example.issue_management_system.repository.IssueRepository;
@@ -15,8 +16,21 @@ import com.example.issue_management_system.service.IssueService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
 @Service
-public class IssueServiceImpl extends BaseServiceImpl<Issue, Integer, IssueRequest, IssueDto> implements IssueService {
+public class IssueServiceImpl extends BaseServiceImpl<Issue, Integer, IssueRequest, IssueDto>
+        implements IssueService {
+
+    private final Map<IssueStatus, List<IssueStatus>> STATUS_FLOW = Map.of(
+            IssueStatus.OPEN, List.of(IssueStatus.IN_PROGRESS),
+            IssueStatus.IN_PROGRESS, List.of(IssueStatus.RESOLVED),
+            IssueStatus.RESOLVED, List.of(IssueStatus.CLOSED),
+            IssueStatus.CLOSED, List.of(IssueStatus.OPEN)
+    );
+
 
     private final IssueRepository issueRepository;
     private final IssueMapper issueMapper;
@@ -42,25 +56,22 @@ public class IssueServiceImpl extends BaseServiceImpl<Issue, Integer, IssueReque
 
     @Transactional
     @Override
-    public Issue assignIssue(Integer issueId, Integer assigneeId) {
+    public IssueDto assignIssue(Integer issueId, Integer assigneeId) {
         Issue issue = findById(issueId);
         memberService.checkMember(issue.getProject().getId(), assigneeId);
         User assignee = userService.findById(assigneeId);
         issue.setAssignee(assignee);
-        return issueRepository.save(issue);
+        return issueMapper.toResponse(issueRepository.save(issue));
     }
 
     @Transactional
     @Override
-    public Issue changeStatus(Integer issueId, IssueStatus newStatus, Integer userId) {
+    public IssueDto changeStatus(Integer issueId, IssueStatus newStatus, Integer userId) {
         Issue issue = findById(issueId);
-
         User changeBy = userService.findById(userId);
-        memberService.checkMember(issue.getProject().getId(), userId);
 
-        if (!issue.getAssignee().getId().equals(userId)) {
-            memberService.checkRole(issue.getProject().getId(), userId, ProjectRole.OWNER);
-        }
+        validateStatusFlow(issue, newStatus);
+        validateChangeStatusPermission(issue, changeBy.getId());
 
         IssueStatus oldStatus = issue.getStatus();
         issue.setStatus(newStatus);
@@ -72,7 +83,12 @@ public class IssueServiceImpl extends BaseServiceImpl<Issue, Integer, IssueReque
         history.setChangedBy(changeBy);
 
         historyRepository.save(history);
-        return issueRepository.save(issue);
+        return issueMapper.toResponse(issueRepository.save(issue));
+    }
+
+    @Override
+    public List<IssueDto> findAllByProjectId(Integer projectId) {
+        return issueRepository.findAllByProjectId(projectId).stream().map(issueMapper::toResponse).toList();
     }
 
     @Override
@@ -91,8 +107,21 @@ public class IssueServiceImpl extends BaseServiceImpl<Issue, Integer, IssueReque
     @Override
     public Issue onUpdate(IssueRequest issueRequest, Issue e) {
         User reporter = userService.findById(issueRequest.getReporterId());
-
         e.setReporter(reporter);
         return super.onUpdate(issueRequest, e);
+    }
+
+    private void validateStatusFlow(Issue issue, IssueStatus newStatus) {
+        IssueStatus oldStatus = issue.getStatus();
+        if (!STATUS_FLOW.getOrDefault(oldStatus, List.of()).contains(newStatus)) {
+            throw new BusinessException("Trang thai khong hop le");
+        }
+    }
+
+    private void validateChangeStatusPermission(Issue issue, Integer userId) {
+        if (issue.getAssignee() != null && issue.getAssignee().getId().equals(userId)) {
+            return;
+        }
+        memberService.checkRole(issue.getProject().getId(), userId, ProjectRole.OWNER);
     }
 }

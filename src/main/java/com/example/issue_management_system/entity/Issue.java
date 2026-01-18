@@ -1,10 +1,13 @@
 package com.example.issue_management_system.entity;
 
+import com.example.issue_management_system.entity.enums.IssuePriority;
 import com.example.issue_management_system.entity.enums.IssueStatus;
+import com.example.issue_management_system.entity.enums.IssueType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -21,6 +24,16 @@ public class Issue extends BaseEntity{
     @Enumerated(EnumType.STRING)
     IssueStatus status;
 
+    @Enumerated(EnumType.STRING)
+    IssuePriority priority;
+
+    @Enumerated(EnumType.STRING)
+    IssueType type;
+
+    LocalDateTime dueDate;
+
+    LocalDateTime resolvedAt;
+
     @ManyToOne
     @JoinColumn(name = "reporter_id", nullable = false)
     User reporter;
@@ -35,4 +48,7 @@ public class Issue extends BaseEntity{
 
     @OneToMany(mappedBy = "issue", cascade = CascadeType.ALL, orphanRemoval = true)
     List<IssueImage> issueImages;
+
+    @OneToMany(mappedBy = "issue", cascade = CascadeType.ALL)
+    List<IssueHistory> histories;
 }

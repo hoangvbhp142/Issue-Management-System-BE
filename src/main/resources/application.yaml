@@ -25,11 +25,11 @@ open:
     serverName: "Da bao lam cho vui roi ma"
 
 minio:
-  url: http://localhost:9000
-  access-key: hoang
-  secret-key: hoangviettran
-  bucket: issue-image
-  expiry: 3600
+  url: ${MINIO_URL:your_minio_url}
+  access-key: ${MINIO_ACCESS_KEY:your_minio_access_key}
+  secret-key: ${MINIO_SECRET_KEY:your_minio_secret_key}
+  bucket: ${MINIO_BUCKET:your_minio_bucket}
+  expiry: ${MINIO_EXPIRY:3600}
 
 app:
   init-data: false

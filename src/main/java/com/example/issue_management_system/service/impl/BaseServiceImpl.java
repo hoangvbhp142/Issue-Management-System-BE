@@ -1,6 +1,7 @@
 package com.example.issue_management_system.service.impl;
 
 import com.example.issue_management_system.entity.BaseEntity;
+import com.example.issue_management_system.exception.NotFoundException;
 import com.example.issue_management_system.mapper.BaseMapper;
 import com.example.issue_management_system.repository.BaseRepository;
 import com.example.issue_management_system.service.BaseService;
@@ -19,13 +20,13 @@ public abstract class BaseServiceImpl<T extends BaseEntity, ID, R, Q> implements
     @Override
     public T findById(ID id) {
         return baseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Resource not found"));
+                .orElseThrow(() -> new NotFoundException("Resource not found"));
     }
 
     @Override
     public Q findByIdAndIsDeletedFalse(ID id) {
         T e = baseRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new RuntimeException("Resource not found"));
+                .orElseThrow(() -> new NotFoundException("Resource not found"));
         return baseMapper.toResponse(e);
     }
 

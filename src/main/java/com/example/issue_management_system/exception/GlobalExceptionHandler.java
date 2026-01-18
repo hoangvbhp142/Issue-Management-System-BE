@@ -10,7 +10,7 @@ import java.util.Date;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(value = {RuntimeException.class})
+    @ExceptionHandler(value = {BusinessException.class, NotFoundException.class, AlreadyExistException.class, RuntimeException.class})
     public ErrorResponse handleRuntimeException(WebRequest request, RuntimeException exception) {
         ErrorResponse response = new ErrorResponse();
 

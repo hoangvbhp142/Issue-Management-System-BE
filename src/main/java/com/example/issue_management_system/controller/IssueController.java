@@ -98,5 +98,15 @@ public class IssueController extends BaseController<Integer, IssueRequest> {
                 "Success"
         );
     }
+
+    @GetMapping("/{projectId}/project")
+    public ApiResponse<?> getAllByProject(@PathVariable Integer projectId) {
+        var response = issueService.findAllByProjectId(projectId);
+        return new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Success",
+                response
+        );
+    }
 }
 

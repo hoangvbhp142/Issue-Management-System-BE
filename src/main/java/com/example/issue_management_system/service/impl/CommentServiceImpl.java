@@ -4,6 +4,7 @@ import com.example.issue_management_system.dto.response.CommentDto;
 import com.example.issue_management_system.entity.Comment;
 import com.example.issue_management_system.entity.Issue;
 import com.example.issue_management_system.entity.User;
+import com.example.issue_management_system.exception.NotFoundException;
 import com.example.issue_management_system.mapper.CommentMapper;
 import com.example.issue_management_system.repository.CommentRepository;
 import com.example.issue_management_system.repository.IssueRepository;
@@ -43,10 +44,10 @@ public class CommentServiceImpl extends BaseServiceImpl<Comment, Integer, Commen
     @Override
     public Comment onCreate(CommentRequest commentRequest, Comment e) {
         User user = userRepository.findByIdAndIsDeletedFalse(commentRequest.getUserId())
-                .orElseThrow(() -> new RuntimeException("Resource not found"));
+                .orElseThrow(() -> new NotFoundException("Khong tim thay user"));
 
         Issue issue = issueRepository.findByIdAndIsDeletedFalse(commentRequest.getIssueId())
-                .orElseThrow(() -> new RuntimeException("Resource not found"));
+                .orElseThrow(() -> new RuntimeException("Khong tim thay issue"));
 
         e.setUser(user);
         e.setIssue(issue);

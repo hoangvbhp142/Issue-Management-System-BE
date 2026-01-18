@@ -24,8 +24,8 @@ public class IssueHistoryServiceImpl extends BaseServiceImpl<IssueHistory, Integ
     }
 
     @Override
-    public IssueHistory create(IssueHistory issueHistory) {
-        return historyRepository.save(issueHistory);
+    public IssueHistoryDto create(IssueHistory issueHistory) {
+        return historyMapper.toResponse(historyRepository.save(issueHistory));
     }
 
     @Override

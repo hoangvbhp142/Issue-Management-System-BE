@@ -5,6 +5,9 @@ import com.example.issue_management_system.dto.response.ProjectMemberDto;
 import com.example.issue_management_system.entity.Project;
 import com.example.issue_management_system.entity.ProjectMember;
 import com.example.issue_management_system.entity.User;
+import com.example.issue_management_system.exception.AlreadyExistException;
+import com.example.issue_management_system.exception.BusinessException;
+import com.example.issue_management_system.exception.NotFoundException;
 import com.example.issue_management_system.mapper.ProjectMemberMapper;
 import com.example.issue_management_system.repository.ProjectMemberRepository;
 import com.example.issue_management_system.dto.request.ProjectMemberRequest;
@@ -42,7 +45,7 @@ public class ProjectMemberServiceImpl extends BaseServiceImpl<ProjectMember, Int
         checkRole(projectId, currentUserId, ProjectRole.OWNER);
 
         if (isMember(projectId, userId)) {
-            throw new RuntimeException("Da co trong nhom du an");
+            throw new AlreadyExistException("Da co trong nhom du an");
         }
         User user = userService.findById(userId);
         Project project = projectService.findById(projectId);
@@ -61,15 +64,15 @@ public class ProjectMemberServiceImpl extends BaseServiceImpl<ProjectMember, Int
 
         checkRole(projectId, currentUserId, ProjectRole.OWNER);
         if (userId.equals(currentUserId)) {
-            throw new RuntimeException("Khong the tu xoa ban than");
+            throw new BusinessException("Khong the tu xoa ban than");
         }
 
         ProjectMember targetMember = memberRepository.findByProjectIdAndUserId(projectId, userId)
-                        .orElseThrow(() -> new RuntimeException("Thanh vien khong co trong nhom"));
+                        .orElseThrow(() -> new NotFoundException("Thanh vien khong co trong nhom"));
 
         if (targetMember.getRole().equals(ProjectRole.OWNER)) {
             if (memberRepository.countByProjectIdAndRole(projectId, ProjectRole.OWNER) <= 1) {
-                throw new RuntimeException("Khong the xoa lead cuoi dung");
+                throw new BusinessException("Khong the xoa lead cuoi dung");
             }
         }
 
@@ -81,15 +84,15 @@ public class ProjectMemberServiceImpl extends BaseServiceImpl<ProjectMember, Int
     public void changeRole(Integer projectId, Integer userId, Integer currentUserId, ProjectRole newRole) {
         checkRole(projectId, currentUserId, ProjectRole.OWNER);
         ProjectMember targetMember = memberRepository.findByProjectIdAndUserId(projectId, userId)
-                .orElseThrow(() -> new RuntimeException("Thanh vien khong co trong nhom"));
+                .orElseThrow(() -> new NotFoundException("Thanh vien khong co trong nhom"));
 
         if (targetMember.getRole().equals(ProjectRole.OWNER)) {
             if (memberRepository.countByProjectIdAndRole(projectId, ProjectRole.OWNER) <= 1) {
-                throw new RuntimeException("Khong the thuc hien, day la owner cuoi cung");
+                throw new BusinessException("Khong the thuc hien, day la owner cuoi cung");
             }
 
             if (!newRole.equals(ProjectRole.OWNER) && targetMember.getUser().getId().equals(currentUserId)) {
-                throw new RuntimeException("Khong the tu ha cap ban than");
+                throw new BusinessException("Khong the tu ha cap ban than");
             }
         }
         targetMember.setRole(newRole);
@@ -104,14 +107,14 @@ public class ProjectMemberServiceImpl extends BaseServiceImpl<ProjectMember, Int
     @Override
     public void checkMember(Integer projectId, Integer userId) {
         if (!memberRepository.existsByProjectIdAndUserId(projectId, userId)) {
-            throw new RuntimeException("Khong phai thanh vien cua nhom");
+            throw new BusinessException("Khong phai thanh vien cua nhom");
         }
     }
 
     @Override
     public void checkRole(Integer projectId, Integer userId, ProjectRole requiredRole) {
         if (!memberRepository.existsByProjectIdAndUserIdAndRole(projectId, userId, requiredRole)) {
-            throw new RuntimeException("Khong duoc phep thuc hien");
+            throw new BusinessException("Khong duoc phep thuc hien");
         }
     }
 

@@ -5,6 +5,7 @@ import com.example.issue_management_system.dto.response.ProjectDto;
 import com.example.issue_management_system.entity.Project;
 import com.example.issue_management_system.entity.ProjectMember;
 import com.example.issue_management_system.entity.User;
+import com.example.issue_management_system.exception.BusinessException;
 import com.example.issue_management_system.mapper.ProjectMapper;
 import com.example.issue_management_system.repository.ProjectMemberRepository;
 import com.example.issue_management_system.repository.ProjectRepository;
@@ -38,7 +39,7 @@ public class ProjectServiceImpl extends BaseServiceImpl<Project, Integer, Projec
         Project project = findById(projectId);
 
         if (!project.getOwner().getId().equals(currentUserId)) {
-            throw new RuntimeException("Khong duoc phep thuc hien");
+            throw new BusinessException("Khong duoc phep thuc hien");
         }
 
     }
