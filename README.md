@@ -200,4 +200,4 @@ mong tìm được 1 công việc đúng chuyên môn**
 ---
 
 
-trien khai minio de luu anh cua issue
+xong phan config security, con dang ky, dang nhap, tao bang role
