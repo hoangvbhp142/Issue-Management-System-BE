@@ -2,16 +2,16 @@
 
 ## Overview
 
-Issue Management System là một **backend service** mô phỏng hệ thống quản lý công việc / lỗi (issue) trong các dự án phần mềm.
+**Issue Management System** là một **backend service** mô phỏng hệ thống quản lý công việc / lỗi (issue) trong các dự án phần mềm.
+Hệ thống tập trung vào **thiết kế nghiệp vụ, phân quyền, authentication/authorization và kiến trúc backend**, không hướng tới UI.
 
-Hệ thống cho phép:
+### Chức năng chính:
 
 * Quản lý Project
 * Quản lý thành viên trong Project với phân quyền
 * Quản lý Issue (tạo, assign, thay đổi trạng thái)
 * Lưu lịch sử thay đổi trạng thái Issue (audit)
-
-Dự án tập trung vào **thiết kế nghiệp vụ, phân quyền và kiến trúc backend**, không hướng tới UI.
+* Xác thực & phân quyền người dùng bằng JWT
 
 ---
 
@@ -19,11 +19,37 @@ Dự án tập trung vào **thiết kế nghiệp vụ, phân quyền và kiến
 
 * **Java 21**
 * **Spring Boot**
+* **Spring Security + JWT**
 * **Spring Data JPA (Hibernate)**
 * **RESTful API**
 * **MySQL**
 * **Maven**
-* **Minio**
+* **MinIO** (lưu trữ ảnh cho Issue)
+
+---
+
+## Authentication & Authorization
+
+### Authentication
+
+* Sử dụng **Spring Security + JWT**
+* Các API đăng ký / đăng nhập:
+
+  * `POST /api/v1/auth/register`
+  * `POST /api/v1/auth/login`
+* Sau khi đăng nhập thành công:
+
+  * Server trả về **JWT**
+  * Client gửi JWT qua header `Authorization: Bearer <token>`
+
+### Authorization
+
+* Không truyền `userId` từ client cho các nghiệp vụ chính
+* User hiện tại được lấy từ **SecurityContext**
+* Phân quyền dựa trên:
+
+  * Role hệ thống (`ROLE_USER`, `ROLE_ADMIN`)
+  * Role trong project (`OWNER`, `MEMBER`)
 
 ---
 
@@ -31,79 +57,96 @@ Dự án tập trung vào **thiết kế nghiệp vụ, phân quyền và kiến
 
 ### Project Management
 
-* Tạo project mới
+* Tạo project mới (user đăng nhập)
 * Cập nhật thông tin project
 * Archive project (soft delete)
-* Lấy danh sách project mà user tham gia
+* Lấy danh sách project mà user đang tham gia
 
-**Lưu ý:**
+**Nghiệp vụ:**
 
-* Project không bị xoá cứng khỏi database
-* Khi project bị archive, các thao tác tạo / cập nhật issue sẽ bị chặn
+* Người tạo project:
+
+  * Tự động trở thành `OWNER`
+  * Được thêm vào bảng `ProjectMember`
+* Project **không bị xoá cứng** khỏi database
+* Khi project bị archive:
+
+  * Không cho phép tạo / cập nhật issue
 
 ---
 
 ### Project Member & Role
 
-Mỗi project có danh sách thành viên riêng thông qua entity `ProjectMember`.
+Mỗi project quản lý thành viên thông qua entity trung gian `ProjectMember`.
 
-**Role hiện tại:**
+**Role trong project:**
 
 * `OWNER`
 * `MEMBER`
 
-**Nghiệp vụ chính:**
+**Quyền hạn:**
 
-* OWNER có quyền:
+* `OWNER` có quyền:
 
-    * Thêm thành viên
-    * Xoá thành viên
-    * Thay đổi role
+  * Thêm / xoá thành viên
+  * Thay đổi role thành viên
 * Không cho phép:
 
-    * Xoá OWNER cuối cùng
-    * OWNER tự hạ cấp chính mình
+  * Xoá OWNER cuối cùng
+  * OWNER tự hạ cấp chính mình
 
 ---
 
 ### Issue Management
 
 * Member có thể tạo issue trong project
-* Issue có các thông tin:
+* Issue bao gồm:
 
-    * Title
-    * Description
-    * Status
-    * Reporter
-    * Assignee
+  * Title
+  * Description
+  * Status
+  * Reporter
+  * Assignee
 
-**Assign issue:**
+**Assign Issue (nghiệp vụ):**
 
-* OWNER có thể assign issue cho người khác
-* MEMBER chỉ có thể tự assign cho chính mình
+* `OWNER`:
 
----
+  * Có thể assign issue cho bất kỳ member nào
+* `MEMBER`:
 
-### Issue Status & History
-
-* Issue có các trạng thái: `OPEN`, `IN_PROGRESS`, `DONE`, `REOPEN`
-* Chỉ Assignee hoặc OWNER mới được thay đổi trạng thái
-* Khi trạng thái issue thay đổi:
-
-    * Hệ thống tự động lưu lịch sử vào `IssueHistory`
-    * Phục vụ audit và theo dõi tiến trình
+  * Chỉ được tự assign issue cho chính mình
 
 ---
 
-### Authorization Design
+### Issue Status & History (Audit)
 
-* Không sử dụng Spring Security (ở mức demo)
-* Quyền được kiểm tra tại **Service layer**
-* Controller chỉ làm nhiệm vụ nhận request và trả response
-* Phân quyền dựa trên:
+**Trạng thái Issue:**
 
-    * Membership trong project
-    * Role của user trong project
+* `OPEN`
+* `IN_PROGRESS`
+* `RESOLVED`
+* `CLOSED`
+
+**Nghiệp vụ:**
+
+* Chỉ `Assignee` hoặc `OWNER` mới được thay đổi trạng thái
+* Trạng thái phải tuân theo **luồng hợp lệ**
+* Mỗi lần đổi trạng thái:
+
+  * Hệ thống tự động ghi log vào bảng `IssueHistory`
+  * Phục vụ audit và tracking tiến trình
+
+---
+
+### Comment & Image
+
+* Issue có thể có:
+
+  * Nhiều comment
+  * Nhiều hình ảnh đính kèm
+* Ảnh được lưu trữ bằng **MinIO**
+* Backend chỉ lưu `objectKey`, không lưu file trực tiếp trong database
 
 ---
 
@@ -112,48 +155,43 @@ Mỗi project có danh sách thành viên riêng thông qua entity `ProjectMembe
 **Main entities:**
 
 * `User`
+* `Role`
 * `Project`
 * `ProjectMember`
 * `Issue`
 * `IssueHistory`
 * `Comment`
-* `Image`
+* `IssueImage`
 
-Quan hệ:
+**Quan hệ chính:**
 
-* Project – ProjectMember: One-to-Many
 * User – ProjectMember: One-to-Many
+* Project – ProjectMember: One-to-Many
 * Project – Issue: One-to-Many
 * Issue – IssueHistory: One-to-Many
-* Issue - Image: One-to-Many
-* Issue - Comment: One-to-Many
+* Issue – Comment: One-to-Many
+* Issue – Image: One-to-Many
 
 ---
 
 ## API Structure (Example)
 
 ```text
+AuthController
+POST    /auth/register
+POST    /auth/login
+
 UserController
-GET     /users/{id}
-GET     /users
-POST    /users
-PUT     /users/{id}
-DELETE  /users/{id}
+GET     /users/me
+PUT     /users/me/profile
+PUT     /users/me/password
 
-IssueController
-GET     /issues/{id}
-GET     /issues
-POST    /issues
-PUT     /issues/{id}/assign
-PUT     /issues/{id}/status
-DELETE    /issues/{id}
-
-CommentController
-POST    /comments
-GET     /comments/issue/{issueId}
-
-IssueHistoryController
-GET     /issue-histories/issue/{issueId}
+AdminUserController
+GET     /admin/users/{id}
+GET     /admin/users
+POST    /admin/users
+PUT     /admin/users/{id}
+DELETE  /admin/users/{id}
 
 ProjectController
 POST    /projects
@@ -166,9 +204,24 @@ POST    /projects/{projectId}/members
 DELETE  /projects/{projectId}/members/{userId}
 PUT     /projects/{projectId}/members/{userId}/role
 
+IssueController
+POST    /issues
+GET     /issues/{id}
+GET     /projects/{projectId}/issues
+PUT     /issues/{id}/assign
+PUT     /issues/{id}/status
+DELETE  /issues/{id}
+
+CommentController
+POST    /comments
+GET     /comments/issue/{issueId}
+
 ImageController
-POST    /images/{id}/images
+POST    /issues/{issueId}/images
 GET     /issues/{issueId}/images
+
+IssueHistoryController
+GET     /issue-histories/issue/{issueId}
 ```
 
 ---
@@ -178,26 +231,32 @@ GET     /issues/{issueId}/images
 Mục tiêu của project:
 
 * Thực hành thiết kế backend theo **real-world business logic**
-* Tách rõ responsibility giữa Controller – Service – Repository
-* Thể hiện tư duy phân quyền, audit và lifecycle dữ liệu
+* Áp dụng **Spring Security + JWT**
+* Thiết kế phân quyền ở **Service layer**
+* Thể hiện tư duy:
+
+  * Authorization theo ngữ cảnh (project-based)
+  * Audit dữ liệu
+  * Lifecycle của entity
 
 ---
 
 ## Future Improvements
 
-* Tích hợp Spring Security + JWT
 * Permission chi tiết hơn (Issue-level permission)
-* Notification khi issue được assign / đổi trạng thái
+* Notification (email / websocket) khi:
+
+  * Issue được assign
+  * Issue đổi trạng thái
+* Pagination & filtering nâng cao
+* API rate limiting
 
 ---
 
 ## Author
 
-* **Backend Developer (Fresher / Junior)**
-* Tech stack: Java – Spring Boot – JPA
-* **Project được làm bởi 1 thằng vừa mới ra trường và đang thất nghiệp, 
-mong tìm được 1 công việc đúng chuyên môn**
----
+**Backend Developer (Intern / Fresher)**
+Tech stack: **Java – Spring Boot – Spring Security – JPA**
 
+> Project được xây dựng bởi 1 thằng lười mãi không tìm được việc
 
-xong phan config security, con dang ky, dang nhap, tao bang role

@@ -58,7 +58,13 @@ public class IssueServiceImpl extends BaseServiceImpl<Issue, Integer, IssueReque
     @Override
     public IssueDto assignIssue(Integer issueId, Integer assigneeId) {
         Issue issue = findById(issueId);
+        User currentUser = userService.getUserAuthentication();
         memberService.checkMember(issue.getProject().getId(), assigneeId);
+
+        if (!currentUser.getId().equals(assigneeId)) {
+            memberService.checkRole(issue.getProject().getId(), currentUser.getId(), ProjectRole.OWNER);
+        }
+
         User assignee = userService.findById(assigneeId);
         issue.setAssignee(assignee);
         return issueMapper.toResponse(issueRepository.save(issue));
@@ -66,9 +72,9 @@ public class IssueServiceImpl extends BaseServiceImpl<Issue, Integer, IssueReque
 
     @Transactional
     @Override
-    public IssueDto changeStatus(Integer issueId, IssueStatus newStatus, Integer userId) {
+    public IssueDto changeStatus(Integer issueId, IssueStatus newStatus) {
         Issue issue = findById(issueId);
-        User changeBy = userService.findById(userId);
+        User changeBy = userService.getUserAuthentication();
 
         validateStatusFlow(issue, newStatus);
         validateChangeStatusPermission(issue, changeBy.getId());
@@ -93,11 +99,10 @@ public class IssueServiceImpl extends BaseServiceImpl<Issue, Integer, IssueReque
 
     @Override
     public Issue onCreate(IssueRequest issueRequest, Issue e) {
-        User reporter = userService.findById(issueRequest.getReporterId());
+        User reporter = userService.getUserAuthentication();
         Project project = projectService.findById(issueRequest.getProjectId());
 
         memberService.checkMember(project.getId(), reporter.getId());
-
 
         e.setProject(project);
         e.setReporter(reporter);
@@ -106,7 +111,7 @@ public class IssueServiceImpl extends BaseServiceImpl<Issue, Integer, IssueReque
 
     @Override
     public Issue onUpdate(IssueRequest issueRequest, Issue e) {
-        User reporter = userService.findById(issueRequest.getReporterId());
+        User reporter = userService.getUserAuthentication();
         e.setReporter(reporter);
         return super.onUpdate(issueRequest, e);
     }

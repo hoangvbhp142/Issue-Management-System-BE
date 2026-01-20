@@ -78,10 +78,9 @@ public class IssueController extends BaseController<Integer, IssueRequest> {
     @PutMapping("/{id}/status")
     public ApiResponse<?> changeStatus(
             @PathVariable Integer id,
-            @RequestParam IssueStatus status,
-            @RequestParam Integer userId
+            @RequestParam IssueStatus status
     ) {
-        var response = issueService.changeStatus(id, status, userId);
+        var response = issueService.changeStatus(id, status);
         return new ApiResponse<>(
                 HttpStatus.OK.value(),
                 "Success",

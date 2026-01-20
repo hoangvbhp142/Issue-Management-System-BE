@@ -6,12 +6,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentRequest implements Serializable {
-    String content;
-    Integer issueId;
+public class AdminUserRequest implements Serializable {
+    String username;
+    String email;
+    String password;
+    String fullName;
+    List<Integer> roleIds;
 }

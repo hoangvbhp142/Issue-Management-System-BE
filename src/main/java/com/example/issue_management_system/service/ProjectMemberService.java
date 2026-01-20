@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface ProjectMemberService {
 
-    void addMember(Integer projectId, Integer userId, Integer currentUserId);
-    void removeMember(Integer projectId, Integer userId, Integer currentUserId);
-    void changeRole(Integer projectId, Integer userId, Integer currentUserId, ProjectRole newRole);
+    void addMember(Integer projectId, Integer userId);
+    void removeMember(Integer projectId, Integer userId);
+    void changeRole(Integer projectId, Integer userId, ProjectRole newRole);
     boolean isMember(Integer projectId, Integer userId);
     void checkMember(Integer projectId, Integer userId);
     void checkRole(Integer projectId, Integer userId, ProjectRole requiredRole);

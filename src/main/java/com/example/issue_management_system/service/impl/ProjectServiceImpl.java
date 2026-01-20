@@ -11,6 +11,7 @@ import com.example.issue_management_system.repository.ProjectMemberRepository;
 import com.example.issue_management_system.repository.ProjectRepository;
 import com.example.issue_management_system.dto.request.ProjectRequest;
 import com.example.issue_management_system.service.ProjectService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -44,12 +45,12 @@ public class ProjectServiceImpl extends BaseServiceImpl<Project, Integer, Projec
 
     }
 
+    @Transactional
     @Override
     public ProjectDto create(ProjectRequest projectRequest) {
-
         Project project = projectMapper.createToEntity(projectRequest);
 
-        User owner = userService.findById(projectRequest.getOwnerId());
+        User owner = userService.getUserAuthentication();
         project.setOwner(owner);
 
         Project savedProject = projectRepository.save(project);
@@ -71,7 +72,7 @@ public class ProjectServiceImpl extends BaseServiceImpl<Project, Integer, Projec
 
     @Override
     public Project onUpdate(ProjectRequest projectRequest, Project e) {
-        User owner = userService.findById(projectRequest.getOwnerId());
+        User owner = userService.getUserAuthentication();
         e.setOwner(owner);
         return super.onUpdate(projectRequest, e);
     }

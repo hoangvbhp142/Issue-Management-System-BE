@@ -21,6 +21,5 @@ public class IssueRequest {
     IssuePriority priority;
     IssueType type;
     LocalDateTime dueDate;
-    Integer reporterId;
     Integer projectId;
 }

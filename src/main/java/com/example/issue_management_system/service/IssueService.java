@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface IssueService {
     IssueDto assignIssue(Integer issueId, Integer assigneeId);
-    IssueDto changeStatus(Integer issueId, IssueStatus newStatus, Integer userId);
+    IssueDto changeStatus(Integer issueId, IssueStatus newStatus);
     List<IssueDto> findAllByProjectId(Integer projectId);
 }

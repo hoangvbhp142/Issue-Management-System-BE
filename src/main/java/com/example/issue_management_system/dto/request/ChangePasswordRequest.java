@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentRequest implements Serializable {
-    String content;
-    Integer issueId;
+public class ChangePasswordRequest implements Serializable {
+    String oldPassword;
+    String newPassword;
 }

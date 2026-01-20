@@ -1,73 +1,45 @@
 package com.example.issue_management_system.controller;
 
 import com.example.issue_management_system.common.ApiResponse;
-import com.example.issue_management_system.dto.request.UserRequest;
+import com.example.issue_management_system.dto.request.ChangePasswordRequest;
+import com.example.issue_management_system.dto.request.UpdateProfileRequest;
 import com.example.issue_management_system.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("${api.prefix}/users")
 @RequiredArgsConstructor
-public class UserController extends BaseController<Integer, UserRequest> {
+public class UserController {
 
     private final UserServiceImpl userService;
 
-    @GetMapping("/{id}")
-    @Override
-    public ApiResponse<?> getById(Integer id) {
-        var response = userService.findByIdAndIsDeletedFalse(id);
+    @GetMapping("/me")
+    public ApiResponse<?> getCurrentUser() {
         return new ApiResponse<>(
                 HttpStatus.OK.value(),
                 "Success",
-                response
+                userService.getCurrentUser()
         );
     }
 
-    @GetMapping("")
-    @Override
-    public ApiResponse<?> getAll(int pageSize, int pageNum) {
-        Pageable pageable = PageRequest.of(pageNum, pageSize);
-        var response = userService.findAllByIsDeletedFalse(pageable);
+    @PutMapping("/me/profile")
+    public ApiResponse<?> updateProfile(@RequestBody UpdateProfileRequest request) {
         return new ApiResponse<>(
                 HttpStatus.OK.value(),
-                "Success",
-                response
+                "Profile updated successfully",
+                userService.updateProfile(request)
         );
     }
 
-    @PostMapping("")
-    @Override
-    public ApiResponse<?> create(UserRequest request) {
-        var response = userService.create(request);
-        return new ApiResponse<>(
-                HttpStatus.CREATED.value(),
-                "Success",
-                response
-        );
-    }
-
-    @PutMapping("/{id}")
-    @Override
-    public ApiResponse<?> update(Integer id, UserRequest request) {
-        var response = userService.update(id, request);
+    @PutMapping("/me/password")
+    public ApiResponse<?> changePassword(@RequestBody ChangePasswordRequest request) {
+        userService.changePassword(request);
         return new ApiResponse<>(
                 HttpStatus.OK.value(),
-                "Success",
-                response
-        );
-    }
-
-    @DeleteMapping("/{id}")
-    @Override
-    public ApiResponse<?> delete(Integer id) {
-        userService.delete(id);
-        return new ApiResponse<>(
-                HttpStatus.OK.value(),
-                "Success"
+                "Password changed successfully"
         );
     }
 }
+

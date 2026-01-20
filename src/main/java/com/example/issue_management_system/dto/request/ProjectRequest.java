@@ -13,5 +13,4 @@ import java.io.Serializable;
 public class ProjectRequest implements Serializable {
     String name;
     String description;
-    Integer ownerId;
 }

@@ -1,7 +1,6 @@
 package com.example.issue_management_system.security.jwt;
 
 import com.example.issue_management_system.security.service.UserDetailsServiceImpl;
-import com.example.issue_management_system.service.impl.UserServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

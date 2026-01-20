@@ -1,20 +1,20 @@
 package com.example.issue_management_system.dto.response;
 
-import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.FieldDefaults;
 
-import java.io.Serializable;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserDto implements Serializable {
+@AllArgsConstructor
+public class AdminUserDto {
     Integer id;
     String username;
     String email;
     String fullName;
+    List<RoleDto> roles;
 }

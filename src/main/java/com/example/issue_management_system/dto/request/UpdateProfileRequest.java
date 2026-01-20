@@ -11,7 +11,6 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentRequest implements Serializable {
-    String content;
-    Integer issueId;
+public class UpdateProfileRequest implements Serializable {
+    String fullName;
 }

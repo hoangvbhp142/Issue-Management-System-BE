@@ -40,9 +40,9 @@ public class ProjectMemberServiceImpl extends BaseServiceImpl<ProjectMember, Int
 
     @Transactional
     @Override
-    public void addMember(Integer projectId, Integer userId, Integer currentUserId) {
-
-        checkRole(projectId, currentUserId, ProjectRole.OWNER);
+    public void addMember(Integer projectId, Integer userId) {
+        User currentUser = userService.getUserAuthentication();
+        checkRole(projectId, currentUser.getId(), ProjectRole.OWNER);
 
         if (isMember(projectId, userId)) {
             throw new AlreadyExistException("Da co trong nhom du an");
@@ -60,10 +60,10 @@ public class ProjectMemberServiceImpl extends BaseServiceImpl<ProjectMember, Int
 
     @Transactional
     @Override
-    public void removeMember(Integer projectId, Integer userId, Integer currentUserId) {
-
-        checkRole(projectId, currentUserId, ProjectRole.OWNER);
-        if (userId.equals(currentUserId)) {
+    public void removeMember(Integer projectId, Integer userId) {
+        User currentUser = userService.getUserAuthentication();
+        checkRole(projectId, currentUser.getId(), ProjectRole.OWNER);
+        if (userId.equals(currentUser.getId())) {
             throw new BusinessException("Khong the tu xoa ban than");
         }
 
@@ -81,8 +81,10 @@ public class ProjectMemberServiceImpl extends BaseServiceImpl<ProjectMember, Int
 
     @Transactional
     @Override
-    public void changeRole(Integer projectId, Integer userId, Integer currentUserId, ProjectRole newRole) {
-        checkRole(projectId, currentUserId, ProjectRole.OWNER);
+    public void changeRole(Integer projectId, Integer userId, ProjectRole newRole) {
+        User currentUser = userService.getUserAuthentication();
+
+        checkRole(projectId, currentUser.getId(), ProjectRole.OWNER);
         ProjectMember targetMember = memberRepository.findByProjectIdAndUserId(projectId, userId)
                 .orElseThrow(() -> new NotFoundException("Thanh vien khong co trong nhom"));
 
@@ -91,7 +93,7 @@ public class ProjectMemberServiceImpl extends BaseServiceImpl<ProjectMember, Int
                 throw new BusinessException("Khong the thuc hien, day la owner cuoi cung");
             }
 
-            if (!newRole.equals(ProjectRole.OWNER) && targetMember.getUser().getId().equals(currentUserId)) {
+            if (!newRole.equals(ProjectRole.OWNER) && targetMember.getUser().getId().equals(currentUser.getId())) {
                 throw new BusinessException("Khong the tu ha cap ban than");
             }
         }

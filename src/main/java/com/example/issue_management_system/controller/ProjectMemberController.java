@@ -14,17 +14,12 @@ public class ProjectMemberController {
 
     private final ProjectMemberServiceImpl projectMemberService;
 
-    private Integer getCurrentUserId() {
-        return 1; // demo
-    }
-
     @PostMapping
     public ApiResponse<?> addMember(@PathVariable Integer projectId,
                                     @RequestBody ProjectMemberRequest request) {
         projectMemberService.addMember(
                 projectId,
-                request.getUserId(),
-                getCurrentUserId()
+                request.getUserId()
         );
 
         return new ApiResponse<>(
@@ -38,8 +33,7 @@ public class ProjectMemberController {
                                        @PathVariable Integer userId) {
         projectMemberService.removeMember(
                 projectId,
-                userId,
-                getCurrentUserId()
+                userId
         );
 
         return new ApiResponse<>(
@@ -55,7 +49,6 @@ public class ProjectMemberController {
         projectMemberService.changeRole(
                 projectId,
                 userId,
-                getCurrentUserId(),
                 request.getRole()
         );
 

@@ -22,18 +22,18 @@ public class CommentServiceImpl extends BaseServiceImpl<Comment, Integer, Commen
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
 
-    private final UserRepository userRepository;
-    private final IssueRepository issueRepository;
+    private final UserServiceImpl userService;
+    private final IssueServiceImpl issueService;
 
     public CommentServiceImpl(CommentRepository commentRepository,
                               CommentMapper commentMapper,
-                              UserRepository userRepository,
-                              IssueRepository issueRepository) {
+                              UserServiceImpl userService,
+                              IssueServiceImpl issueService) {
         super(commentRepository, commentMapper);
         this.commentRepository = commentRepository;
         this.commentMapper = commentMapper;
-        this.userRepository = userRepository;
-        this.issueRepository = issueRepository;
+        this.userService = userService;
+        this.issueService = issueService;
     }
 
     @Override
@@ -43,11 +43,8 @@ public class CommentServiceImpl extends BaseServiceImpl<Comment, Integer, Commen
 
     @Override
     public Comment onCreate(CommentRequest commentRequest, Comment e) {
-        User user = userRepository.findByIdAndIsDeletedFalse(commentRequest.getUserId())
-                .orElseThrow(() -> new NotFoundException("Khong tim thay user"));
-
-        Issue issue = issueRepository.findByIdAndIsDeletedFalse(commentRequest.getIssueId())
-                .orElseThrow(() -> new RuntimeException("Khong tim thay issue"));
+        User user = userService.getUserAuthentication();
+        Issue issue = issueService.findById(commentRequest.getIssueId());
 
         e.setUser(user);
         e.setIssue(issue);
