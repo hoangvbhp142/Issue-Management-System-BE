@@ -1,14 +1,24 @@
 package com.example.issue_management_system.repository;
 
 import com.example.issue_management_system.entity.Issue;
+import jakarta.persistence.LockModeType;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface IssueRepository extends BaseRepository<Issue, Integer> {
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("""
+            SELECT i FROM Issue i WHERE i.id = :id
+            """)
+    Optional<Issue> findByIdForUpdate(@Param("id") Integer id);
+
     List<Issue> findAllByProjectId(Integer projectId);
 
     @Query("""

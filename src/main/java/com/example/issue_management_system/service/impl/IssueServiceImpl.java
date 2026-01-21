@@ -9,6 +9,7 @@ import com.example.issue_management_system.entity.Issue;
 import com.example.issue_management_system.entity.IssueHistory;
 import com.example.issue_management_system.entity.User;
 import com.example.issue_management_system.exception.BusinessException;
+import com.example.issue_management_system.exception.NotFoundException;
 import com.example.issue_management_system.mapper.IssueMapper;
 import com.example.issue_management_system.repository.IssueHistoryRepository;
 import com.example.issue_management_system.repository.IssueRepository;
@@ -59,7 +60,9 @@ public class IssueServiceImpl extends BaseServiceImpl<Issue, Integer, IssueReque
     @Transactional
     @Override
     public IssueDto assignIssue(Integer issueId, Integer assigneeId) {
-        Issue issue = findById(issueId);
+        Issue issue = issueRepository.findByIdForUpdate(issueId)
+                .orElseThrow(() -> new NotFoundException("Khong tim thay issue"));
+
         User currentUser = userService.getUserAuthentication();
         memberService.checkMember(issue.getProject().getId(), assigneeId);
 
