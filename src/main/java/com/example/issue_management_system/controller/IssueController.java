@@ -107,5 +107,15 @@ public class IssueController extends BaseController<Integer, IssueRequest> {
                 response
         );
     }
+
+    @GetMapping("/{projectId}/board")
+    public ApiResponse<?> getBoardByProject(@PathVariable Integer projectId) {
+        var response = issueService.getBoardByProjectId(projectId);
+        return new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Success",
+                response
+        );
+    }
 }
 

@@ -1,5 +1,6 @@
 package com.example.issue_management_system.service.impl;
 
+import com.example.issue_management_system.dto.response.BoardDto;
 import com.example.issue_management_system.entity.Project;
 import com.example.issue_management_system.entity.enums.IssueStatus;
 import com.example.issue_management_system.entity.enums.ProjectRole;
@@ -16,7 +17,8 @@ import com.example.issue_management_system.service.IssueService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -95,6 +97,24 @@ public class IssueServiceImpl extends BaseServiceImpl<Issue, Integer, IssueReque
     @Override
     public List<IssueDto> findAllByProjectId(Integer projectId) {
         return issueRepository.findAllByProjectId(projectId).stream().map(issueMapper::toResponse).toList();
+    }
+
+    @Override
+    public Map<IssueStatus, List<IssueDto>> getBoardByProjectId(Integer projectId) {
+        List<IssueDto> issueList = findAllByProjectId(projectId);
+        Map<IssueStatus, List<IssueDto>> map = new HashMap<>();
+
+        issueList.forEach(issueDto -> {
+            if (!map.containsKey(issueDto.getStatus())) {
+                map.put(issueDto.getStatus(), new ArrayList<>());
+                map.get(issueDto.getStatus()).add(issueDto);
+            }
+            else {
+                map.get(issueDto.getStatus()).add(issueDto);
+            }
+        });
+
+        return map;
     }
 
     @Override

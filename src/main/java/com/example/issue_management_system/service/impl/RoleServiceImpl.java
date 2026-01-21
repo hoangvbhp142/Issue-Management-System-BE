@@ -8,6 +8,8 @@ import com.example.issue_management_system.mapper.RoleMapper;
 import com.example.issue_management_system.repository.RoleRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class RoleServiceImpl extends BaseServiceImpl<Role, Integer, RoleRequest, RoleDto> {
 
@@ -23,5 +25,9 @@ public class RoleServiceImpl extends BaseServiceImpl<Role, Integer, RoleRequest,
     public Role findByName(String name) {
         return repository.findByName(name)
                 .orElseThrow(() -> new NotFoundException("Khong tim thay role"));
+    }
+
+    public List<Role> findAllById(List<Integer> roleIds) {
+        return repository.findAllById(roleIds);
     }
 }

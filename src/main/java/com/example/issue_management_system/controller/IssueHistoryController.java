@@ -29,5 +29,20 @@ public class IssueHistoryController {
                 response
         );
     }
+
+    @GetMapping("/project/{projectId}")
+    public ApiResponse<?> getByProject(
+            @PathVariable Integer projectId,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(defaultValue = "0") int pageNum
+    ) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
+        var response = issueHistoryService.findAllByProjectId(projectId, pageable);
+        return new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Success",
+                response
+        );
+    }
 }
 

@@ -24,6 +24,8 @@ public class IssueDto implements Serializable {
     IssueStatus status;
     IssuePriority priority;
     IssueType type;
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
     LocalDateTime dueDate;
     LocalDateTime resolvedAt;
     UserDto reporter;

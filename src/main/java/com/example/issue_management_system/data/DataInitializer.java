@@ -1,7 +1,9 @@
 package com.example.issue_management_system.data;
 
+import com.example.issue_management_system.dto.request.AdminUserRequest;
 import com.example.issue_management_system.dto.request.ProjectRequest;
 import com.example.issue_management_system.dto.request.RoleRequest;
+import com.example.issue_management_system.service.impl.AdminUserServiceImpl;
 import com.example.issue_management_system.service.impl.ProjectServiceImpl;
 import com.example.issue_management_system.service.impl.RoleServiceImpl;
 import jakarta.transaction.Transactional;
@@ -23,6 +25,7 @@ public class DataInitializer implements ApplicationRunner {
 
     private final RoleServiceImpl roleService;
     private final ProjectServiceImpl projectService;
+    private final AdminUserServiceImpl adminUserService;
 
     private final List<RoleRequest> roleRequests = List.of(
             new RoleRequest("ROLE_USER"),
@@ -37,16 +40,26 @@ public class DataInitializer implements ApplicationRunner {
             new ProjectRequest("SmartHome Manager", "Centralized IoT platform for home automation and energy optimization")
     );
 
+    private final List<AdminUserRequest> adminUserRequests = List.of(
+            new AdminUserRequest("admin1", "admin1@example.com", "1", "Nguyễn Văn A", List.of(1)),
+            new AdminUserRequest("admin2", "admin2@example.com", "1", "Trần Thị B", List.of(2)),
+            new AdminUserRequest("manager1", "manager1@example.com", "1", "Lê Văn C", List.of(1)),
+            new AdminUserRequest("superadmin", "superadmin@example.com", "1", "Phạm Thị D", List.of(2)),
+            new AdminUserRequest("sysadmin", "sysadmin@example.com", "1", "Hoàng Văn E", List.of(2))
+    );
 
     @Transactional
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        for (RoleRequest request: roleRequests) {
-            roleService.create(request);
-        }
+//        for (RoleRequest request: roleRequests) {
+//            roleService.create(request);
+//        }
 
-        for (ProjectRequest request: projectRequests) {
-            projectService.create(request);
+//        for (ProjectRequest request: projectRequests) {
+//            projectService.create(request);
+//        }
+        for (AdminUserRequest request: adminUserRequests) {
+            adminUserService.create(request);
         }
     }
 }

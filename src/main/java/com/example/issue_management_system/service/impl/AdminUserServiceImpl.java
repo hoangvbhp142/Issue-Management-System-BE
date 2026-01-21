@@ -12,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -46,8 +48,8 @@ public class AdminUserServiceImpl extends BaseServiceImpl<User, Integer, AdminUs
     @Override
     public User onCreate(AdminUserRequest adminUserRequest, User e) {
         e.setPassword(passwordEncoder.encode(adminUserRequest.getPassword()));
-        Role role = roleService.findByName("ROLE_USER");
-        e.setRoles(Set.of(role));
+        List<Role> roles = roleService.findAllById(adminUserRequest.getRoleIds());
+        e.setRoles(new HashSet<>(roles));
         return super.onCreate(adminUserRequest, e);
     }
 }

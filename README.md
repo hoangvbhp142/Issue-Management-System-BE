@@ -8,23 +8,23 @@ Hệ thống tập trung vào **thiết kế nghiệp vụ, phân quyền, authe
 ### Chức năng chính:
 
 * Quản lý Project
-* Quản lý thành viên trong Project với phân quyền
-* Quản lý Issue (tạo, assign, thay đổi trạng thái)
-* Lưu lịch sử thay đổi trạng thái Issue (audit)
-* Xác thực & phân quyền người dùng bằng JWT
+  * Quản lý thành viên trong Project với phân quyền
+  * Quản lý Issue (tạo, assign, thay đổi trạng thái)
+  * Lưu lịch sử thay đổi trạng thái Issue (audit)
+  * Xác thực & phân quyền người dùng bằng JWT
 
 ---
 
 ## Tech Stack
 
 * **Java 21**
-* **Spring Boot**
-* **Spring Security + JWT**
-* **Spring Data JPA (Hibernate)**
-* **RESTful API**
-* **MySQL**
-* **Maven**
-* **MinIO** (lưu trữ ảnh cho Issue)
+  * **Spring Boot**
+  * **Spring Security + JWT**
+  * **Spring Data JPA (Hibernate)**
+  * **RESTful API**
+  * **MySQL**
+  * **Maven**
+  * **MinIO** (lưu trữ ảnh cho Issue)
 
 ---
 
@@ -33,23 +33,23 @@ Hệ thống tập trung vào **thiết kế nghiệp vụ, phân quyền, authe
 ### Authentication
 
 * Sử dụng **Spring Security + JWT**
-* Các API đăng ký / đăng nhập:
+  * Các API đăng ký / đăng nhập:
 
-  * `POST /api/v1/auth/register`
-  * `POST /api/v1/auth/login`
-* Sau khi đăng nhập thành công:
+    * `POST /api/v1/auth/register`
+    * `POST /api/v1/auth/login`
+  * Sau khi đăng nhập thành công:
 
-  * Server trả về **JWT**
-  * Client gửi JWT qua header `Authorization: Bearer <token>`
+    * Server trả về **JWT**
+    * Client gửi JWT qua header `Authorization: Bearer <token>`
 
 ### Authorization
 
 * Không truyền `userId` từ client cho các nghiệp vụ chính
-* User hiện tại được lấy từ **SecurityContext**
-* Phân quyền dựa trên:
+  * User hiện tại được lấy từ **SecurityContext**
+  * Phân quyền dựa trên:
 
-  * Role hệ thống (`ROLE_USER`, `ROLE_ADMIN`)
-  * Role trong project (`OWNER`, `MEMBER`)
+    * Role hệ thống (`ROLE_USER`, `ROLE_ADMIN`)
+    * Role trong project (`OWNER`, `MEMBER`)
 
 ---
 
@@ -58,9 +58,9 @@ Hệ thống tập trung vào **thiết kế nghiệp vụ, phân quyền, authe
 ### Project Management
 
 * Tạo project mới (user đăng nhập)
-* Cập nhật thông tin project
-* Archive project (soft delete)
-* Lấy danh sách project mà user đang tham gia
+  * Cập nhật thông tin project
+  * Archive project (soft delete)
+  * Lấy danh sách project mà user đang tham gia
 
 **Nghiệp vụ:**
 
@@ -68,10 +68,10 @@ Hệ thống tập trung vào **thiết kế nghiệp vụ, phân quyền, authe
 
   * Tự động trở thành `OWNER`
   * Được thêm vào bảng `ProjectMember`
-* Project **không bị xoá cứng** khỏi database
-* Khi project bị archive:
+  * Project **không bị xoá cứng** khỏi database
+  * Khi project bị archive:
 
-  * Không cho phép tạo / cập nhật issue
+    * Không cho phép tạo / cập nhật issue
 
 ---
 
@@ -82,7 +82,7 @@ Mỗi project quản lý thành viên thông qua entity trung gian `ProjectMembe
 **Role trong project:**
 
 * `OWNER`
-* `MEMBER`
+  * `MEMBER`
 
 **Quyền hạn:**
 
@@ -90,32 +90,32 @@ Mỗi project quản lý thành viên thông qua entity trung gian `ProjectMembe
 
   * Thêm / xoá thành viên
   * Thay đổi role thành viên
-* Không cho phép:
+  * Không cho phép:
 
-  * Xoá OWNER cuối cùng
-  * OWNER tự hạ cấp chính mình
+    * Xoá OWNER cuối cùng
+    * OWNER tự hạ cấp chính mình
 
 ---
 
 ### Issue Management
 
 * Member có thể tạo issue trong project
-* Issue bao gồm:
+  * Issue bao gồm:
 
-  * Title
-  * Description
-  * Status
-  * Reporter
-  * Assignee
+    * Title
+    * Description
+    * Status
+    * Reporter
+    * Assignee
 
 **Assign Issue (nghiệp vụ):**
 
 * `OWNER`:
 
   * Có thể assign issue cho bất kỳ member nào
-* `MEMBER`:
+  * `MEMBER`:
 
-  * Chỉ được tự assign issue cho chính mình
+    * Chỉ được tự assign issue cho chính mình
 
 ---
 
@@ -124,18 +124,18 @@ Mỗi project quản lý thành viên thông qua entity trung gian `ProjectMembe
 **Trạng thái Issue:**
 
 * `OPEN`
-* `IN_PROGRESS`
-* `RESOLVED`
-* `CLOSED`
+  * `IN_PROGRESS`
+  * `RESOLVED`
+  * `CLOSED`
 
 **Nghiệp vụ:**
 
 * Chỉ `Assignee` hoặc `OWNER` mới được thay đổi trạng thái
-* Trạng thái phải tuân theo **luồng hợp lệ**
-* Mỗi lần đổi trạng thái:
+  * Trạng thái phải tuân theo **luồng hợp lệ**
+  * Mỗi lần đổi trạng thái:
 
-  * Hệ thống tự động ghi log vào bảng `IssueHistory`
-  * Phục vụ audit và tracking tiến trình
+    * Hệ thống tự động ghi log vào bảng `IssueHistory`
+    * Phục vụ audit và tracking tiến trình
 
 ---
 
@@ -145,32 +145,42 @@ Mỗi project quản lý thành viên thông qua entity trung gian `ProjectMembe
 
   * Nhiều comment
   * Nhiều hình ảnh đính kèm
-* Ảnh được lưu trữ bằng **MinIO**
-* Backend chỉ lưu `objectKey`, không lưu file trực tiếp trong database
+  * Ảnh được lưu trữ bằng **MinIO**
+  * Backend chỉ lưu `objectKey`, không lưu file trực tiếp trong database
 
 ---
+
+### Issue Dashboard & Summary
+
+* Issue summary by:
+  * Status
+  * Type
+  * Priority
+* Tổng hợp bằng JPQL (GROUP BY, COUNT)
+* Được sử dụng cho dashboard
+
 
 ## Database Design (Simplified)
 
 **Main entities:**
 
 * `User`
-* `Role`
-* `Project`
-* `ProjectMember`
-* `Issue`
-* `IssueHistory`
-* `Comment`
-* `IssueImage`
+  * `Role`
+  * `Project`
+  * `ProjectMember`
+  * `Issue`
+  * `IssueHistory`
+  * `Comment`
+  * `IssueImage`
 
 **Quan hệ chính:**
 
 * User – ProjectMember: One-to-Many
-* Project – ProjectMember: One-to-Many
-* Project – Issue: One-to-Many
-* Issue – IssueHistory: One-to-Many
-* Issue – Comment: One-to-Many
-* Issue – Image: One-to-Many
+  * Project – ProjectMember: One-to-Many
+  * Project – Issue: One-to-Many
+  * Issue – IssueHistory: One-to-Many
+  * Issue – Comment: One-to-Many
+  * Issue – Image: One-to-Many
 
 ---
 
@@ -231,25 +241,25 @@ GET     /issue-histories/issue/{issueId}
 Mục tiêu của project:
 
 * Thực hành thiết kế backend theo **real-world business logic**
-* Áp dụng **Spring Security + JWT**
-* Thiết kế phân quyền ở **Service layer**
-* Thể hiện tư duy:
+  * Áp dụng **Spring Security + JWT**
+  * Thiết kế phân quyền ở **Service layer**
+  * Thể hiện tư duy:
 
-  * Authorization theo ngữ cảnh (project-based)
-  * Audit dữ liệu
-  * Lifecycle của entity
+    * Authorization theo ngữ cảnh (project-based)
+    * Audit dữ liệu
+    * Lifecycle của entity
 
 ---
 
 ## Future Improvements
 
 * Permission chi tiết hơn (Issue-level permission)
-* Notification (email / websocket) khi:
+  * Notification (email / websocket) khi:
 
-  * Issue được assign
-  * Issue đổi trạng thái
-* Pagination & filtering nâng cao
-* API rate limiting
+    * Issue được assign
+    * Issue đổi trạng thái
+  * Pagination & filtering nâng cao
+  * API rate limiting
 
 ---
 
