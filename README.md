@@ -73,6 +73,20 @@ Hệ thống tập trung vào **thiết kế nghiệp vụ, phân quyền, authe
 
     * Không cho phép tạo / cập nhật issue
 
+* Create Project Flow
+  * User đăng nhập → JWT
+  * Gọi POST /projects
+  * Backend lấy user từ SecurityContext
+  * Tạo Project
+  * Tạo ProjectMember với role OWNER
+  * Trả ProjectDto
+
+* Assign Issue Flow
+  * User gọi PUT /issues/{id}/assign
+  * Backend xác định user hiện tại
+  * Nếu assign cho người khác → check OWNER
+  * Nếu self-assign → cho phép
+  * Update assignee
 ---
 
 ### Project Member & Role
@@ -82,7 +96,7 @@ Mỗi project quản lý thành viên thông qua entity trung gian `ProjectMembe
 **Role trong project:**
 
 * `OWNER`
-  * `MEMBER`
+* `MEMBER`
 
 **Quyền hạn:**
 
@@ -159,19 +173,20 @@ Mỗi project quản lý thành viên thông qua entity trung gian `ProjectMembe
 * Tổng hợp bằng JPQL (GROUP BY, COUNT)
 * Được sử dụng cho dashboard
 
+---
 
 ## Database Design (Simplified)
 
 **Main entities:**
 
 * `User`
-  * `Role`
-  * `Project`
-  * `ProjectMember`
-  * `Issue`
-  * `IssueHistory`
-  * `Comment`
-  * `IssueImage`
+* `Role`
+* `Project`
+* `ProjectMember`
+* `Issue`
+* `IssueHistory`
+* `Comment`
+* `IssueImage`
 
 **Quan hệ chính:**
 
@@ -221,6 +236,7 @@ GET     /projects/{projectId}/issues
 PUT     /issues/{id}/assign
 PUT     /issues/{id}/status
 DELETE  /issues/{id}
+GET     /issues/{projectId}/board
 
 CommentController
 POST    /comments
@@ -232,6 +248,12 @@ GET     /issues/{issueId}/images
 
 IssueHistoryController
 GET     /issue-histories/issue/{issueId}
+
+SummaryController
+GET     /summary/{projectId}/status
+GET     /summary/{projectId}/type
+GET     /summary/{projectId}/priority
+
 ```
 
 ---

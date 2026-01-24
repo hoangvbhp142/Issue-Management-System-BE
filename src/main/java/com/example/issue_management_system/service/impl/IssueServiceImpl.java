@@ -1,6 +1,7 @@
 package com.example.issue_management_system.service.impl;
 
-import com.example.issue_management_system.dto.response.BoardDto;
+import com.example.issue_management_system.common.event.IssueAssignedEvent;
+import com.example.issue_management_system.common.event.IssueStatusChangedEvent;
 import com.example.issue_management_system.entity.Project;
 import com.example.issue_management_system.entity.enums.IssueStatus;
 import com.example.issue_management_system.entity.enums.ProjectRole;
@@ -16,6 +17,7 @@ import com.example.issue_management_system.repository.IssueRepository;
 import com.example.issue_management_system.dto.request.IssueRequest;
 import com.example.issue_management_system.service.IssueService;
 import jakarta.transaction.Transactional;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,6 +28,8 @@ import java.util.Map;
 @Service
 public class IssueServiceImpl extends BaseServiceImpl<Issue, Integer, IssueRequest, IssueDto>
         implements IssueService {
+
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     private final Map<IssueStatus, List<IssueStatus>> STATUS_FLOW = Map.of(
             IssueStatus.OPEN, List.of(IssueStatus.IN_PROGRESS),
@@ -44,11 +48,15 @@ public class IssueServiceImpl extends BaseServiceImpl<Issue, Integer, IssueReque
     private final ProjectMemberServiceImpl memberService;
     private final ProjectServiceImpl projectService;
 
-    public IssueServiceImpl(IssueRepository issueRepository,
+    public IssueServiceImpl(ApplicationEventPublisher applicationEventPublisher,
+                            IssueRepository issueRepository,
                             IssueMapper issueMapper,
                             UserServiceImpl userService,
-                            IssueHistoryRepository historyRepository, ProjectMemberServiceImpl memberService, ProjectServiceImpl projectService) {
+                            IssueHistoryRepository historyRepository,
+                            ProjectMemberServiceImpl memberService,
+                            ProjectServiceImpl projectService) {
         super(issueRepository, issueMapper);
+        this.applicationEventPublisher = applicationEventPublisher;
         this.issueRepository = issueRepository;
         this.issueMapper = issueMapper;
         this.userService = userService;
@@ -72,6 +80,9 @@ public class IssueServiceImpl extends BaseServiceImpl<Issue, Integer, IssueReque
 
         User assignee = userService.findById(assigneeId);
         issue.setAssignee(assignee);
+        applicationEventPublisher.publishEvent(
+                new IssueAssignedEvent(issueId, assigneeId, currentUser.getId())
+        );
         return issueMapper.toResponse(issueRepository.save(issue));
     }
 
@@ -94,6 +105,9 @@ public class IssueServiceImpl extends BaseServiceImpl<Issue, Integer, IssueReque
         history.setChangedBy(changeBy);
 
         historyRepository.save(history);
+        applicationEventPublisher.publishEvent(
+                new IssueStatusChangedEvent(issueId, changeBy.getId())
+        );
         return issueMapper.toResponse(issueRepository.save(issue));
     }
 
