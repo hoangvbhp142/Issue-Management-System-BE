@@ -1,7 +1,10 @@
 package com.example.issue_management_system.controller;
 
 import com.example.issue_management_system.common.ApiResponse;
+import com.example.issue_management_system.common.PagingResponse;
 import com.example.issue_management_system.dto.request.AdminUserRequest;
+import com.example.issue_management_system.dto.response.AdminUserDto;
+import com.example.issue_management_system.mapper.PagingMapper;
 import com.example.issue_management_system.service.impl.AdminUserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -34,7 +37,8 @@ public class AdminUserController extends BaseController<Integer, AdminUserReques
     @Override
     public ApiResponse<?> getAll(int pageSize, int pageNum) {
         Pageable pageable = PageRequest.of(pageNum, pageSize);
-        var response = adminUserService.findAllByIsDeletedFalse(pageable);
+        var result = adminUserService.findAllByIsDeletedFalse(pageable);
+        PagingResponse<AdminUserDto> response = PagingMapper.toResponse(result);
         return new ApiResponse<>(
                 HttpStatus.OK.value(),
                 "Success",
