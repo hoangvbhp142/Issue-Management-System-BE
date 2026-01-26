@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,6 +28,7 @@ public class ProjectController extends BaseController<Integer, ProjectRequest> {
         );
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("")
     @Override
     public ApiResponse<?> getAll(int pageSize, int pageNum) {
@@ -68,6 +70,16 @@ public class ProjectController extends BaseController<Integer, ProjectRequest> {
         return new ApiResponse<>(
                 HttpStatus.OK.value(),
                 "Success"
+        );
+    }
+
+    @GetMapping("/mine")
+    public ApiResponse<?> getVisibleToUser() {
+        var response = projectService.findProjectVisibleToUser();
+        return new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Success",
+                response
         );
     }
 }

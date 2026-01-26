@@ -223,6 +223,7 @@ POST    /projects
 GET     /projects
 GET     /projects/{id}
 POST    /projects/{id}/archive
+GET     /projects/mine
 
 ProjectMemberController
 POST    /projects/{projectId}/members

@@ -14,6 +14,8 @@ import com.example.issue_management_system.service.ProjectService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProjectServiceImpl extends BaseServiceImpl<Project, Integer, ProjectRequest, ProjectDto>
         implements ProjectService {
@@ -43,6 +45,14 @@ public class ProjectServiceImpl extends BaseServiceImpl<Project, Integer, Projec
             throw new BusinessException("Khong duoc phep thuc hien");
         }
 
+    }
+
+    @Override
+    public List<ProjectDto> findProjectVisibleToUser() {
+        User user = userService.getUserAuthentication();
+        return projectRepository.findProjectsVisibleToUser(user.getId()).stream().map(
+                projectMapper::toResponse
+        ).toList();
     }
 
     @Transactional
