@@ -2,6 +2,7 @@ package com.example.issue_management_system.service.impl;
 
 import com.example.issue_management_system.common.event.IssueAssignedEvent;
 import com.example.issue_management_system.common.event.IssueStatusChangedEvent;
+import com.example.issue_management_system.dto.request.IssueSearchRequest;
 import com.example.issue_management_system.entity.Project;
 import com.example.issue_management_system.entity.enums.IssueStatus;
 import com.example.issue_management_system.entity.enums.ProjectRole;
@@ -16,14 +17,17 @@ import com.example.issue_management_system.repository.IssueHistoryRepository;
 import com.example.issue_management_system.repository.IssueRepository;
 import com.example.issue_management_system.dto.request.IssueRequest;
 import com.example.issue_management_system.service.IssueService;
+import com.example.issue_management_system.specification.IssueSpecification;
 import jakarta.transaction.Transactional;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class IssueServiceImpl extends BaseServiceImpl<Issue, Integer, IssueRequest, IssueDto>
@@ -114,6 +118,23 @@ public class IssueServiceImpl extends BaseServiceImpl<Issue, Integer, IssueReque
     @Override
     public List<IssueDto> findAllByProjectId(Integer projectId) {
         return issueRepository.findAllByProjectId(projectId).stream().map(issueMapper::toResponse).toList();
+    }
+
+    public Page<IssueDto> findAllByProjectId(Integer projectId, IssueSearchRequest request) {
+        Specification<Issue> spec = Specification
+                .where(IssueSpecification.project(projectId))
+                .and(IssueSpecification.keywordFilter(request.getKeyword()))
+                .and(IssueSpecification.statusesFilter(request.getStatuses()))
+                .and(IssueSpecification.typesFilter(request.getTypes()))
+                .and(IssueSpecification.prioritiesFilter(request.getPriorities()))
+                .and(IssueSpecification.assigneeFilter(request.getAssigneeId()));
+
+        Pageable pageable = PageRequest.of(
+                request.getPageNum(),
+                request.getPageSize(),
+                Sort.by(request.getDirection(), request.getSortBy()));
+
+        return issueRepository.findAll(spec, pageable).map(issueMapper::toResponse);
     }
 
     @Override

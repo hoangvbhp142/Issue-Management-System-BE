@@ -1,10 +1,14 @@
 package com.example.issue_management_system.controller;
 
+import com.example.issue_management_system.dto.request.IssueSearchRequest;
+import com.example.issue_management_system.dto.response.IssueDto;
 import com.example.issue_management_system.entity.enums.IssueStatus;
 import com.example.issue_management_system.common.ApiResponse;
 import com.example.issue_management_system.dto.request.IssueRequest;
+import com.example.issue_management_system.mapper.PagingMapper;
 import com.example.issue_management_system.service.impl.IssueServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -98,9 +102,10 @@ public class IssueController extends BaseController<Integer, IssueRequest> {
         );
     }
 
-    @GetMapping("/{projectId}/project")
-    public ApiResponse<?> getAllByProject(@PathVariable Integer projectId) {
-        var response = issueService.findAllByProjectId(projectId);
+    @PostMapping("/{projectId}/project")
+    public ApiResponse<?> getAllByProject(@PathVariable Integer projectId, @RequestBody IssueSearchRequest request) {
+        Page<IssueDto> dtos = issueService.findAllByProjectId(projectId, request);
+        var response = PagingMapper.toResponse(dtos);
         return new ApiResponse<>(
                 HttpStatus.OK.value(),
                 "Success",
