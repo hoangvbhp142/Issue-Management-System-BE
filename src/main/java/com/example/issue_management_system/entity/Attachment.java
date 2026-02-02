@@ -1,8 +1,7 @@
 package com.example.issue_management_system.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import com.example.issue_management_system.entity.enums.RenderMode;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -12,9 +11,15 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class IssueImage extends BaseEntity {
+public class Attachment extends BaseEntity {
 
     String objectKey;
+    String contentType;
+    String fileName;
+    Long size;
+
+    @Enumerated(EnumType.STRING)
+    RenderMode mode;
 
     @ManyToOne
     @JoinColumn(name = "issue_id")

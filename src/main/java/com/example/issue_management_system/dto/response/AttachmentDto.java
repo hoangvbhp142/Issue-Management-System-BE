@@ -1,5 +1,6 @@
 package com.example.issue_management_system.dto.response;
 
+import com.example.issue_management_system.entity.enums.RenderMode;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,11 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class IssueImageDto {
+public class AttachmentDto {
     Integer id;
     String url;
+    String contentType;
+    String fileName;
+    Long size;
+    RenderMode mode;
 }

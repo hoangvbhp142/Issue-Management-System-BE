@@ -41,11 +41,11 @@ public class DataInitializer implements ApplicationRunner {
     );
 
     private final List<AdminUserRequest> adminUserRequests = List.of(
-            new AdminUserRequest("admin1", "admin1@example.com", "1", "Nguyễn Văn A", List.of(1)),
+            new AdminUserRequest("admin1", "admin1@example.com", "1", "Nguyễn Văn A", List.of(2)),
             new AdminUserRequest("admin2", "admin2@example.com", "1", "Trần Thị B", List.of(2)),
-            new AdminUserRequest("manager1", "manager1@example.com", "1", "Lê Văn C", List.of(1)),
-            new AdminUserRequest("superadmin", "superadmin@example.com", "1", "Phạm Thị D", List.of(2)),
-            new AdminUserRequest("sysadmin", "sysadmin@example.com", "1", "Hoàng Văn E", List.of(2))
+            new AdminUserRequest("user1", "user1@example.com", "1", "Lê Văn C", List.of(1)),
+            new AdminUserRequest("user2", "user2@example.com", "1", "Phạm Thị D", List.of(1)),
+            new AdminUserRequest("user3", "user3@example.com", "1", "Hoàng Văn E", List.of(1))
     );
 
     @Transactional

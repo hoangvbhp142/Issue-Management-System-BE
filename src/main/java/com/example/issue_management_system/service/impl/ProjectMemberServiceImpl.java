@@ -1,5 +1,6 @@
 package com.example.issue_management_system.service.impl;
 
+import com.example.issue_management_system.dto.response.UserDto;
 import com.example.issue_management_system.entity.enums.ProjectRole;
 import com.example.issue_management_system.dto.response.ProjectMemberDto;
 import com.example.issue_management_system.entity.Project;
@@ -121,9 +122,9 @@ public class ProjectMemberServiceImpl extends BaseServiceImpl<ProjectMember, Int
     }
 
     @Override
-    public List<User> getMembers(Integer projectId) {
+    public List<ProjectMemberDto> getMembers(Integer projectId) {
         return memberRepository.findAllByProjectId(projectId)
                 .stream()
-                .map(ProjectMember::getUser).toList();
+                .map(memberMapper::toResponse).toList();
     }
 }

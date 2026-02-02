@@ -1,11 +1,12 @@
 package com.example.issue_management_system.service.impl;
 
-import com.example.issue_management_system.dto.response.IssueImageDto;
+import com.example.issue_management_system.dto.response.AttachmentDto;
+import com.example.issue_management_system.entity.Attachment;
 import com.example.issue_management_system.entity.Issue;
-import com.example.issue_management_system.entity.IssueImage;
-import com.example.issue_management_system.mapper.IssueImageMapper;
-import com.example.issue_management_system.repository.IssueImageRepository;
-import com.example.issue_management_system.service.ImageIssueService;
+import com.example.issue_management_system.entity.enums.RenderMode;
+import com.example.issue_management_system.mapper.AttachmentMapper;
+import com.example.issue_management_system.repository.AttachmentRepository;
+import com.example.issue_management_system.service.AttachmentService;
 import io.minio.GetObjectArgs;
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
@@ -14,6 +15,7 @@ import io.minio.errors.*;
 import io.minio.http.Method;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,11 +26,12 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ImageIssueServiceImpl implements ImageIssueService {
+public class AttachmentServiceImpl implements AttachmentService {
 
     @Value("${minio.bucket}")
     private String bucket;
@@ -39,8 +42,8 @@ public class ImageIssueServiceImpl implements ImageIssueService {
     @Value(("${minio.url}"))
     private String minioUrl;
 
-    private final IssueImageRepository issueImageRepository;
-    private final IssueImageMapper issueImageMapper;
+    private final AttachmentRepository attachmentRepository;
+    private final AttachmentMapper attachmentMapper;
 
     private final MinioClient minioClient;
     private final IssueServiceImpl issueService;
@@ -48,8 +51,8 @@ public class ImageIssueServiceImpl implements ImageIssueService {
 
     @Transactional
     @Override
-    public void uploadImage(Integer issueId, List<MultipartFile> files) {
-        List<IssueImage> issueImages = new ArrayList<>();
+    public void upload(Integer issueId, List<MultipartFile> files) {
+        List<Attachment> attachments = new ArrayList<>();
         Issue issue = issueService.findById(issueId);
 
         try {
@@ -67,14 +70,11 @@ public class ImageIssueServiceImpl implements ImageIssueService {
                                 .build()
                 );
 
-                IssueImage issueImage = new IssueImage();
-                issueImage.setObjectKey(objectKey);
-                issueImage.setIssue(issue);
-
-                issueImages.add(issueImage);
+                Attachment attachment = getAttachment(file, objectKey, issue);
+                attachments.add(attachment);
             }
 
-            issueImageRepository.saveAll(issueImages);
+            attachmentRepository.saveAll(attachments);
         } catch (ErrorResponseException | InsufficientDataException | InternalException | InvalidKeyException |
                  InvalidResponseException | IOException | NoSuchAlgorithmException | ServerException |
                  XmlParserException e) {
@@ -83,8 +83,27 @@ public class ImageIssueServiceImpl implements ImageIssueService {
 
     }
 
+    @NotNull
+    private Attachment getAttachment(MultipartFile file, String objectKey, Issue issue) {
+        Attachment attachment = new Attachment();
+        attachment.setObjectKey(objectKey);
+        attachment.setIssue(issue);
+        attachment.setContentType(file.getContentType());
+        attachment.setSize(file.getSize());
+        attachment.setFileName(file.getOriginalFilename());
+
+        attachment.setMode(
+                Objects.requireNonNull(file.getContentType()).startsWith("image/")
+                ? RenderMode.INLINE
+                : file.getContentType().equals("application/pdf")
+                    ? RenderMode.PREVIEW
+                    : RenderMode.DOWNLOAD
+        );
+        return attachment;
+    }
+
     @Override
-    public InputStream getImage(String objectKey) {
+    public InputStream getAttachment(String objectKey) {
         try {
             return minioClient.getObject(
                     GetObjectArgs.builder()
@@ -99,8 +118,8 @@ public class ImageIssueServiceImpl implements ImageIssueService {
     }
 
     @Override
-    public List<IssueImageDto> findImageByIssueId(Integer issueId) {
-        return issueImageRepository.findByIssueId(issueId).stream().map(this::toDto).toList();
+    public List<AttachmentDto> findAttachmentByIssueId(Integer issueId) {
+        return attachmentRepository.findByIssueId(issueId).stream().map(this::toDto).toList();
     }
 
     private String generatePresignedUrl(String objectKey) {
@@ -120,10 +139,14 @@ public class ImageIssueServiceImpl implements ImageIssueService {
         }
     }
 
-    private IssueImageDto toDto(IssueImage issueImage) {
-        IssueImageDto dto = new IssueImageDto();
-        dto.setId(issueImage.getId());
-        dto.setUrl(generatePresignedUrl(issueImage.getObjectKey()));
+    private AttachmentDto toDto(Attachment attachment) {
+        AttachmentDto dto = new AttachmentDto();
+        dto.setId(attachment.getId());
+        dto.setUrl(generatePresignedUrl(attachment.getObjectKey()));
+        dto.setFileName(attachment.getFileName());
+        dto.setContentType(attachment.getContentType());
+        dto.setSize(attachment.getSize());
+        dto.setMode(attachment.getMode());
         return dto;
     }
 }

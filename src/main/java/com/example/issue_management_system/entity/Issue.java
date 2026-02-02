@@ -47,7 +47,7 @@ public class Issue extends BaseEntity{
     Project project;
 
     @OneToMany(mappedBy = "issue", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<IssueImage> issueImages;
+    List<Attachment> attachments;
 
     @OneToMany(mappedBy = "issue", cascade = CascadeType.ALL)
     List<IssueHistory> histories;
