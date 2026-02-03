@@ -44,7 +44,6 @@ Hệ thống tập trung vào **thiết kế nghiệp vụ, phân quyền, authe
 
 ### Authorization
 
-* Không truyền `userId` từ client cho các nghiệp vụ chính
   * User hiện tại được lấy từ **SecurityContext**
   * Phân quyền dựa trên:
 
@@ -293,3 +292,51 @@ Tech stack: **Java – Spring Boot – Spring Security – JPA**
 
 > Project được xây dựng bởi 1 thằng lười mãi không tìm được việc
 
+## Docker
+1. Tạo Docker Network (bắt buộc)
+Tất cả container phải chung network để giao tiếp với nhau.
+
+>docker network create issue-network
+
+Kiểm tra:
+
+>docker network ls
+
+2. Chạy MySQL
+>docker run --network issue-network --name mysql-issue-network -p 3306:3306 -e MYSQL_ROOT_PASSWORD=... -d mysql:8.0.36-debian
+
+
+Lưu ý:
+
+Container name: mysql-issue-network
+
+Database issue-management được tạo sẵn
+
+Backend sẽ connect qua:
+>mysql-issue-network:3306
+
+3. Chạy MinIO
+
+>docker run -d --name minio-issue-network --network issue-network -p 9000:9000 -p 9001:9001 -e MINIO_ROOT_USER=... -e MINIO_ROOT_PASSWORD=... minio/minio server /data --console-address ":9001"
+
+Truy cập MinIO Console
+>http://localhost:9001
+
+Trước khi chạy be nhớ tạo bucket trước
+
+4. Cấu hình biến môi trường cho Backend
+
+Tạo file .env ở thư mục backend:
+
+KHÔNG dùng localhost trong Docker
+
+5. Build Backend Image
+
+>docker build -t issue-management-be:0.0.1 .
+
+
+Kiểm tra: docker images
+
+6. Chạy Backend
+
+>docker run -d --name issue-management-be --network issue-network --env-file .env -p 8080:8080 issue-management-be:0.0.1 
