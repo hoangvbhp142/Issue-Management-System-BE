@@ -33,3 +33,4 @@ minio:
 
 app:
   init-data: false
+  url: http://localhost:5173
