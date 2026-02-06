@@ -1,5 +1,6 @@
 package com.example.issue_management_system.dto.response;
 
+import com.example.issue_management_system.entity.enums.ProjectStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,12 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProjectDto {
     Integer id;
+    String code;
     String name;
     String description;
-    UserDto owner;
+    int issues;
+    int members;
+    int completed;
+    int progress;
+    ProjectStatus status;
 }

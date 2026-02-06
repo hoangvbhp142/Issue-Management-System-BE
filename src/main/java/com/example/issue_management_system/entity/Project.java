@@ -1,8 +1,7 @@
 package com.example.issue_management_system.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import com.example.issue_management_system.entity.enums.ProjectStatus;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -14,8 +13,12 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Project extends BaseEntity {
 
+    String code;
     String name;
     String description;
+
+    @Enumerated(EnumType.STRING)
+    ProjectStatus status;
 
     @ManyToOne
     @JoinColumn(name = "owner_id")

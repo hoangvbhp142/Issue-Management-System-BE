@@ -5,6 +5,7 @@ import com.example.issue_management_system.dto.response.ProjectDto;
 import com.example.issue_management_system.entity.Project;
 import com.example.issue_management_system.entity.ProjectMember;
 import com.example.issue_management_system.entity.User;
+import com.example.issue_management_system.entity.enums.ProjectStatus;
 import com.example.issue_management_system.exception.BusinessException;
 import com.example.issue_management_system.mapper.ProjectMapper;
 import com.example.issue_management_system.repository.ProjectMemberRepository;
@@ -14,6 +15,7 @@ import com.example.issue_management_system.service.ProjectService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -50,9 +52,32 @@ public class ProjectServiceImpl extends BaseServiceImpl<Project, Integer, Projec
     @Override
     public List<ProjectDto> findProjectVisibleToUser() {
         User user = userService.getUserAuthentication();
-        return projectRepository.findProjectsVisibleToUser(user.getId()).stream().map(
-                projectMapper::toResponse
-        ).toList();
+        List<Object[]> result = projectRepository.findProjectsVisibleToUser(user.getId());
+
+        List<ProjectDto> dtos = new ArrayList<>();
+
+        for (Object[] objects: result) {
+
+            int issues = ((Number) objects[4]).intValue();
+            int members = ((Number) objects[5]).intValue();
+            int completed = ((Number) objects[6]).intValue();
+
+            ProjectDto dto = new ProjectDto();
+
+            dto.setId((Integer) objects[0]);
+            dto.setName((String) objects[1]);
+            dto.setDescription((String) objects[2]);
+            dto.setIssues(issues);
+            dto.setMembers(members);
+            dto.setCompleted(completed);
+            dto.setProgress(issues == 0 ? 0 : (int) (completed * 100 / issues));
+            dto.setStatus(ProjectStatus.valueOf((String) objects[3]));
+
+            dto.setCode((String) objects[7]);
+
+            dtos.add(dto);
+        }
+        return dtos;
     }
 
     @Transactional
@@ -62,6 +87,7 @@ public class ProjectServiceImpl extends BaseServiceImpl<Project, Integer, Projec
 
         User owner = userService.getUserAuthentication();
         project.setOwner(owner);
+        project.setStatus(ProjectStatus.PLANNING);
 
         Project savedProject = projectRepository.save(project);
 
@@ -84,6 +110,7 @@ public class ProjectServiceImpl extends BaseServiceImpl<Project, Integer, Projec
     public Project onUpdate(ProjectRequest projectRequest, Project e) {
         User owner = userService.getUserAuthentication();
         e.setOwner(owner);
+        e.setStatus(projectRequest.getStatus());
         return super.onUpdate(projectRequest, e);
     }
 }

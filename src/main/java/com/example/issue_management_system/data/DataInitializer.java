@@ -32,13 +32,13 @@ public class DataInitializer implements ApplicationRunner {
             new RoleRequest("ROLE_ADMIN")
     );
 
-    private final List<ProjectRequest> projectRequests = List.of(
-            new ProjectRequest("OmniMart", "Unified e-commerce platform supporting multiple storefronts"),
-            new ProjectRequest("TeamSync Pro", "Collaboration software with integrated project management and communication"),
-            new ProjectRequest("HealthTrack Plus", "Comprehensive wellness app with AI-powered health recommendations"),
-            new ProjectRequest("FinSecure", "Personal finance manager with investment tracking and security monitoring"),
-            new ProjectRequest("SmartHome Manager", "Centralized IoT platform for home automation and energy optimization")
-    );
+//    private final List<ProjectRequest> projectRequests = List.of(
+//            new ProjectRequest("OmniMart", "Unified e-commerce platform supporting multiple storefronts"),
+//            new ProjectRequest("TeamSync Pro", "Collaboration software with integrated project management and communication"),
+//            new ProjectRequest("HealthTrack Plus", "Comprehensive wellness app with AI-powered health recommendations"),
+//            new ProjectRequest("FinSecure", "Personal finance manager with investment tracking and security monitoring"),
+//            new ProjectRequest("SmartHome Manager", "Centralized IoT platform for home automation and energy optimization")
+//    );
 
     private final List<AdminUserRequest> adminUserRequests = List.of(
             new AdminUserRequest("admin1", "admin1@example.com", "1", "Nguyễn Văn A", List.of(2)),
