@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 public class IssueDto implements Serializable {
     Integer id;
     Integer projectId;
+    String code;
     String title;
     String description;
     IssueStatus status;

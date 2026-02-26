@@ -18,6 +18,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Issue extends BaseEntity{
 
+    String code;
     String title;
     String description;
 
